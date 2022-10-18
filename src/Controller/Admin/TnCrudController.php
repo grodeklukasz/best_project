@@ -48,7 +48,7 @@ class TnCrudController extends AbstractCrudController
         yield FormField::addPanel('Jobcoach');
         yield AssociationField::new('jobcoach')->setRequired(True);
         yield FormField::addPanel('FM');
-        yield AssociationField::new('fm')->setRequired(True);
+        yield AssociationField::new('fm','FM')->setRequired(True);
 
 
     }
