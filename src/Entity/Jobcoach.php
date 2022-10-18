@@ -49,6 +49,11 @@ class Jobcoach
         $this->tns = new ArrayCollection();
     }
 
+    public function __toString(): String 
+    {
+        return $this->nachname . " " . $this->vorname;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

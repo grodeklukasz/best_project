@@ -44,6 +44,11 @@ class Fm
         $this->tns = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->nachname . " " . $this->vorname;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
