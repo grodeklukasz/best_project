@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}App{% endblock %}
+
+{% block body %}
+
+    <span>{{ tn.getStarttermin()|date("d.m.Y") }}</span> -> <span>{{ tn.getAusgeschieden()|date("d.m.Y") }}</span>
+    <hr />
+
+    <strong>{{ interval }}</strong>
+
+    <h4>
+        {{ days }}
+    </h4>
+    <h4>
+        {{ weeks }} weeks
+    </h4>
+    
+{% endblock %}

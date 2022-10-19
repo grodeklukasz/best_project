@@ -165,6 +165,11 @@ class Tn
         return $this->starttermin;
     }
 
+    public function getStartterminAsDiff(?\DateTime $targetObject): ?\DateInterval
+    {
+        return $this->starttermin->diff($targetObject);
+    }
+
     public function setStarttermin(?\DateTimeInterface $starttermin): self
     {
         $this->starttermin = $starttermin;
