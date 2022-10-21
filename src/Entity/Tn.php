@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\TnRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -83,6 +85,20 @@ class Tn
      */
     private $fm;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Termin::class, mappedBy="tn")
+     */
+    private $termins;
+
+    public function __construct()
+    {
+        $this->termins = new ArrayCollection();
+    }
+
+    public function __toString(): String 
+    {
+        return $this->nachname . " " . $this->vorname . " / ". $this->pseudonym;
+    }
 
     public function getId(): ?int
     {
@@ -246,6 +262,36 @@ class Tn
     public function setFm(?Fm $fm): self
     {
         $this->fm = $fm;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Termin>
+     */
+    public function getTermins(): Collection
+    {
+        return $this->termins;
+    }
+
+    public function addTermin(Termin $termin): self
+    {
+        if (!$this->termins->contains($termin)) {
+            $this->termins[] = $termin;
+            $termin->setTn($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTermin(Termin $termin): self
+    {
+        if ($this->termins->removeElement($termin)) {
+            // set the owning side to null (unless already changed)
+            if ($termin->getTn() === $this) {
+                $termin->setTn(null);
+            }
+        }
 
         return $this;
     }
