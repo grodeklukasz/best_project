@@ -4,16 +4,63 @@
 
 {% block body %}
 
-    <span>{{ tn.getStarttermin()|date("d.m.Y") }}</span> -> <span>{{ tn.getAusgeschieden()|date("d.m.Y") }}</span>
+    <h2>BeSt Teilnehmer - Liste</h2>
+   
     <hr />
+    <table class="table table-bordered table-hover">
+        <tbody>
+        <tr>
+            <th>Nachname</th>
+            <th>Vorname</th>
+            <th>Geb. Datum</th>
+            <th>Starttermin</th>
+            <th>geplanter Austritt<br> bei 4 Wo.</th>
+            <th>geplanter Austritt<br> bei 8 Wo.</th>
+            <th>Ausgeschieden</th>
+            <th>Grund</th>
+            <th>Diff Days</th>
+            <th>Diff Weeks</th>
+            <th>Aktiv</th>
+        </tr>
+        </tbody>
+    {% for tn in exportData %}
+        <tbody>
+        <tr>
+            <td>{{ tn.nachname }}</td>
+            <td>{{ tn.vorname }}</td>
+            <td>{{ tn.gebdatum|date("d.m.Y") }}</td>
+            <td>{{ tn.starttermin|date("d.m.Y") }}</td>
+            <td>{{ tn.after4weeks|date("d.m.Y") }}</td>
+            <td>{{ tn.after8weeks|date("d.m.Y") }}</td>
+            <td>
+                {% if tn.ausgeschieden %} 
+                    {{ tn.ausgeschieden|date("d.m.Y") }} 
+                {% else %}
+                    --
+                {% endif %}
+            </td>
+            <td>{{ tn.grundAusgeschieden }}</td>
+            <td {% if(tn.diffdays < 0) and (tn.diffdays != "--") %} class="table-warning" {% endif %}>
+            {{ tn.diffdays }}
+            </td>
+            <td{% if(tn.diffweeks < 0) and (tn.diffweeks != "--") %} class="table-warning" {% endif %}>
+            {{ tn.diffweeks }}
+            </td>
+            <td 
+            class=
+                {% if tn.aktiv %} 
+                    "table-success"
+                    {% else %}
+                    "table-danger"
+                {% endif %}
+            
+            >
 
-    <strong>{{ interval }}</strong>
-
-    <h4>
-        {{ days }}
-    </h4>
-    <h4>
-        {{ weeks }} weeks
-    </h4>
-    
+            {% if(tn.aktiv) %} ja {% else %} nein {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    {% endfor %}
+    </table>
 {% endblock %}
+
