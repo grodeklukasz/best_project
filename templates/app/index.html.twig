@@ -26,7 +26,7 @@
     {% for tn in exportData %}
         <tbody>
         <tr>
-            <td>{{ tn.nachname }}</td>
+            <td><a href="{{ path('app_tn', { id: tn.id }) }}">{{ tn.nachname }}</a></td>
             <td>{{ tn.vorname }}</td>
             <td>{{ tn.gebdatum|date("d.m.Y") }}</td>
             <td>{{ tn.starttermin|date("d.m.Y") }}</td>

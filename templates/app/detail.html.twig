@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <p>
+    <a href="{{ path('app_app') }}">back to home</a>
+    </p>
+    <div class="row">
+        <div class="col-6">
+            <h4>{{ tn.nachname }}, {{ tn.vorname }} <small><span class="badge bg-secondary">{% if not tn.status %} Ausgeschieden {% endif %}</span></small></h4>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Pseudonym</th>
+                        <td>{{ tn.pseudonym }}</td>
+                    </tr>
+                    <tr>
+                        <th>Starttermin</th>
+                        <td>{{ tn.starttermin|date("d.m.Y") }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ausgeschieden (Grund)</th>
+                        <td>{{ tn.ausgeschieden|date("d.m.Y") }} ({{ tn.grundAusgeschieden }})</td>
+                    </tr>
+                    <tr>
+                        <th>Tage</th>
+                        <td>{{ diffdays }}</td>
+                    </tr>
+                    <tr>
+                        <th>Verweil-dauer in Wochen</th>
+                        <td>{{ diffweeks }}</td>
+                    </tr>
+                    <tr>
+                        <th>Jobcoach</th>
+                        <td>{{ tn.jobcoach.getNachname }} {{ tn.jobcoach.getVorname }}</td>
+                    </tr>
+                        <th>FM</th>
+                        <td>{{ tn.fm.getNachname }} {{ tn.fm.getVorname }}</td>
+                    <tr>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <a data-bs-toggle="collapse" href="#collapseExample">Statistik</a>
+            
+            <div class="collapse" id="collapseExample">
+                <table class='table table-sm table-hover'>
+                {% for terminstat in terminArrayStats %}
+                    <tr><td>{{ terminstat.terminname }}</td><td>{{ terminstat.count }}</td></tr>
+                {% endfor %}
+            </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <h5>Termine</h5>
+        {% for termin in termine %}
+            <table>
+            {% for termindate in termin %}
+            <tr style="border-bottom: 1px solid black;">
+                <td style="width: 33%;">{{ termindate.getTermintype().getTerminName() }}</td>
+                <td style="width: 33%;">{{ termindate.getTermindatum()|date("d.m.Y") }}</td>
+                <td style="width: 33%;"><span>{{ termindate.getBemerkung() }}</span></td>
+            </tr>
+            {% endfor %}
+            
+            </table>
+        {% endfor %}
+    </div>
+{% endblock %}

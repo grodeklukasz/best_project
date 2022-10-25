@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Repository\TnRepository;
+use App\Repository\TerminRepository;
+use App\Repository\TerminTypeRepository;
 
 class AppController extends AbstractController
 {
@@ -48,6 +50,7 @@ class AppController extends AbstractController
             $dateAfter4Weeks = $tn->getStarttermin()->add($weeks4)->format('d.m.Y');
             $dateAfter8Weeks = $tn->getStarttermin()->add($weeks8)->format('d.m.Y');
 
+            $exportData[$index]['id'] = $tn->getId();
             $exportData[$index]['nachname'] = $tn->getNachname();
             $exportData[$index]['vorname'] = $tn->getVorname();
             $exportData[$index]['gebdatum'] = $tn->getGebdatum();
@@ -79,6 +82,61 @@ class AppController extends AbstractController
         
         return $this->render('app/index.html.twig', [
             'exportData' => $exportData,
+        ]);
+    }
+    /**
+     * @Route("/tn/{id}", name="app_tn")
+     */
+    public function tnDetail(int $id, TnRepository $tnRepository, TerminRepository $terminRepository, TerminTypeRepository $terminTypeRepository): Response 
+    {
+
+        $tn = $tnRepository->find($id);
+
+        $terminTypes = $terminTypeRepository->findAll();
+        $counter = 0;
+
+        foreach($terminTypes as $terminType)
+        {
+            $allTermins[$terminType->getId()] = $terminRepository->findBy(['tn'=>$id, 'termintype'=>$terminType->getId()]);
+            
+            $resultArray = $terminRepository->countTypesOfTermin($id, $terminType->getId());
+
+            $terminName = $terminType->getTerminName();
+
+            $terminArrayStats[$counter] = [
+                'terminname' => $terminName,
+                'count' => $resultArray[0]['counter'],
+            ];
+
+        
+            $counter++;
+
+        }
+
+        if($tn->getAusgeschieden() == Null){
+
+            $diffdays = "";
+
+            $diffweeks = "";
+
+        }else{
+
+            $interval = $tn->getStartterminAsDiff($tn->getAusgeschieden());
+
+            $diffdays = $interval->format('%R%a');
+
+            $diffweeks = number_format((intval($interval->format('%R%a'))/7), 2, ',','');
+
+        }
+
+
+        return $this->render('app/detail.html.twig',[
+            'id' => $id,
+            'tn' => $tn,
+            'diffdays' => $diffdays,
+            'diffweeks' => $diffweeks,
+            'termine' => $allTermins,
+            'terminArrayStats' => $terminArrayStats,
         ]);
     }
 }
