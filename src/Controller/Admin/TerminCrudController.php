@@ -6,6 +6,8 @@ use App\Entity\Termin;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
@@ -28,6 +30,12 @@ class TerminCrudController extends AbstractCrudController
     {
         return $filters
         ->add(EntityFilter::new('tn'))
+        ;
+    }
+    public function configureActions(Actions $actions): Actions 
+    {
+        return $actions
+        ->add(Crud::PAGE_INDEX, Action::DETAIL)
         ;
     }
     public static function getEntityFqcn(): string
