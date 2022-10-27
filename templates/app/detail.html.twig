@@ -6,7 +6,7 @@
     </p>
     <div class="row">
         <div class="col-6">
-            <h4>{{ tn.nachname }}, {{ tn.vorname }} <small><span class="badge bg-secondary">{% if not tn.status %} Ausgeschieden {% endif %}</span></small></h4>
+            <h4>{{ tn.nachname }}, {{ tn.vorname }} <small>{% if not tn.status %} / Ausgeschieden {% endif %}</small></h4>
             <table class="table table-bordered">
                 <tbody>
                     <tr>
@@ -41,15 +41,12 @@
             </table>
         </div>
         <div class="col-6">
-            <a data-bs-toggle="collapse" href="#collapseExample">Statistik</a>
-            
-            <div class="collapse" id="collapseExample">
+            <h4>Statistik</h4>
                 <table class='table table-sm table-hover'>
                 {% for terminstat in terminArrayStats %}
                     <tr><td>{{ terminstat.terminname }}</td><td>{{ terminstat.count }}</td></tr>
                 {% endfor %}
-            </table>
-            </div>
+                </table>
         </div>
     </div>
     <hr />

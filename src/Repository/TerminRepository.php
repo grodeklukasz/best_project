@@ -52,6 +52,20 @@ class TerminRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();       
     }
 
+    public function countTerminsByType(int $terminTypeId): array 
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql ='SELECT Count(*) as counter FROM termin where termintype_id = :terminTypeId';
+
+        $stmt = $conn->prepare($sql);
+
+        $resultSet = $stmt->executeQuery(['terminTypeId' => $terminTypeId]);
+
+        return $resultSet->fetchAllAssociative();
+
+    }
+
 //    /**
 //     * @return Termin[] Returns an array of Termin objects
 //     */

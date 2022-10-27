@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>Stats</h2>
+    <p>
+    <a href="{{ path('app_app') }}">Back to home</a>
+    </p>
+    <hr />
+    <div class='row'>
+        <div class='col-6'>
+            <table class='table table-sm table-hover'>
+                <thead>
+                    <tr>
+                        <th>Termine</th>
+                        <th>Zahl (Summe)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for termin in allTerminsArray %}
+                        <tr>
+                        <td> {{ termin.terminname }} </td>
+                        <td> {{ termin.count }} </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-sm table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Monat</th>
+                        <th>Eingeladene TN im Monat</th>
+                        <th>Starttermin im Monat</th>
+                        <th>Wie geplant gestartet <br>(Ja/Nein)</th>
+                        <th>Aktive TN <br>[taggleich]</th>
+                        <th>Nicht angetretene TN im Monat</th>
+                        <th>Angetretene TN, <br>aber vorzeitig abgebrochen / beendet</th>
+                        <th>TN, erfolgreich beendet</th>
+                        <th>Durchnchnittstermine <br> der erfolgreich beendeten TN</th>
+                        <th>Termine [ingesamt] im Monat <br>vergeben [betrifft auch Folgemont]</th>
+                        <th>Termine [ingesamt] im Monat verschoben <br> [betrifft auch Folgemonat]</th>
+                        <th>Ausgeschiedene TN <br>[insgesamt] im Monat</th>
+                        <th>Tasächlich durchgeführte <br>Termine im Monat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for month in allMonths %}
+                    <tr>
+                        <td>{{ month }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
