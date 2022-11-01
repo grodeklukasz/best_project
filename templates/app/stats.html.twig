@@ -32,25 +32,31 @@
             <table class="table table-sm table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>Monat</th>
-                        <th>Eingeladene TN im Monat</th>
-                        <th>Starttermin im Monat</th>
-                        <th>Wie geplant gestartet <br>(Ja/Nein)</th>
-                        <th>Aktive TN <br>[taggleich]</th>
-                        <th>Nicht angetretene TN im Monat</th>
-                        <th>Angetretene TN, <br>aber vorzeitig abgebrochen / beendet</th>
-                        <th>TN, erfolgreich beendet</th>
-                        <th>Durchnchnittstermine <br> der erfolgreich beendeten TN</th>
-                        <th>Termine [ingesamt] im Monat <br>vergeben [betrifft auch Folgemont]</th>
-                        <th>Termine [ingesamt] im Monat verschoben <br> [betrifft auch Folgemonat]</th>
-                        <th>Ausgeschiedene TN <br>[insgesamt] im Monat</th>
-                        <th>Tasächlich durchgeführte <br>Termine im Monat</th>
+                        <th class='lightyellow_bg'>Monat</th>
+                        <th class='lightyellow_bg'>Eingeladene TN im Monat</th>
+                        <th class='lila_bg'>Starttermin im Monat</th>
+                        <th class='lightyellow_bg'>Wie geplant gestartet <br>(Ja/Nein)</th>
+                        <th class='lila_bg'>Aktive TN <br>[taggleich]</th>
+                        <th class='lightgreen_bg'>Nicht angetretene TN im Monat</th>
+                        <th class='lightyellow_bg'>Angetretene TN, <br>aber vorzeitig abgebrochen / beendet</th>
+                        <th class='lightyellow_bg'>TN, erfolgreich beendet</th>
+                        <th class='green_bg'>Durchnchnittstermine <br> der erfolgreich beendeten TN</th>
+                        <th class='lila_bg'>Termine [ingesamt] im Monat <br>vergeben [betrifft auch Folgemont]</th>
+                        <th class='lila_bg'>Termine [ingesamt] im Monat verschoben <br> [betrifft auch Folgemonat]</th>
+                        <th class='lightyellow_bg'>Ausgeschiedene TN <br>[insgesamt] im Monat</th>
+                        <th class='lightblue_bg'>Tasächlich durchgeführte <br>Termine im Monat</th>
+                        <th class='orange_bg'>Durchschnittl. Verweildauer <br>in Wochen / TN [ingesamt] </th>
+                        <th class='orange_bg'>Durchschnittl. Verweildauer <br>in Wochen / TN [nur EB]</th>
+                        <th class='red_bg'>Durchschnittl. Wartezeit <br>Zuweisung bis Einladung <br>[Arbeitstage]</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for month in allMonths %}
                     <tr>
                         <td>{{ month }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

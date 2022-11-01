@@ -1,0 +1,57 @@
+body{
+    font-size: 13px;
+    background-color: white;
+    color: black;
+    padding: 20px;
+    margin: 20px;
+    min-height: 800px;
+    border: 4px solid lightgrey;
+    border-radius: 20px 20px 20px 20px;
+    box-shadow: 3px 3px 5px black;
+}
+html{
+    font-family: Arial;
+    background-color: white;  
+}
+.table{
+    border: 1px solid black !important;
+}
+.table th{
+    text-align: center;
+    vertical-align: text-top;
+}
+.table-danger{
+    border: 1px solid black !important;
+}
+.table-primary{
+    border: 1px solid black !important;
+}
+.table-success{
+    border: 1px solid black !important;
+}
+.table-warning{
+    border: 1px solid black !important;
+}
+
+.lila_bg{
+    background-color: violet !important;
+}
+.lightyellow_bg{
+    background-color: lightyellow !important;
+}
+.lightgreen_bg{
+    background-color: lightgreen !important;
+}
+.green_bg{
+    background-color: darkgreen !important;
+    color: white;
+}
+.lightblue_bg{
+    background-color: lightblue !important;
+}
+.red_bg{
+    background-color: red !important;
+}
+.orange_bg{
+    background-color: orange !important;
+}
