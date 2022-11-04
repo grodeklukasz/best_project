@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<a href="{{ path('app_app')}}">back to home</a>
+<h4>Search by Date: {{ searchDate }}</h4>
+<div class="container-fluid">
+    <div class="row">
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th>TN</th>
+                    <th>Starttermin</th>
+                    <th>Ausgeschieden</th>
+                    <th>Grund</th>
+                </tr>
+            </thead>
+        {% for tn in tns %}
+        <tr style='text-align:center;'>
+            <td>{{ tn.nachname }} {{ tn.vorname }}</td>
+            <td>{{ tn.starttermin|date('d.m.Y') }}</td>
+            <td>{% if tn.ausgeschieden %}{{ tn.ausgeschieden|date('d.m.Y') }}{% endif %}</td>
+            <td>{{ tn.grund_ausgeschieden }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12">
+            <table class='table table-bordered table-striped'>
+                <tr>
+                    <th>Monat / Jahr</th>
+                    <th>Eingeladene TN im Monat</th>
+                    <th>Starttermin im Monat</th>
+                    <th>wie Geplant Gestartet Ja</th>
+                    <th>wie Geplant Gestartet Nein</th>
+                    
+                    <th>Nicht angetretene TN<br> im Monat<br> [NA]</th>
+                    <th>Angetretene TN, <br>aber vorzeitig abgebrochen / beendet <br>[VAB]</th>
+                    <th>TN, erfolgreich beendet <br> [EB]</th>
+                    <th>Durchnchnittstermine <br> der erfolgreich beendeten TN</th>
+                    <th>Termine [ingesamt] <br> im Monat vergeben <br> [betrifft auch Folgemonat]</th>
+                </tr>  
+
+                <tr>
+                    <td>{{ searchDate }}</td>
+                    <td>{{ eingeladeneTNimMonat }}</td>
+                    <td>{{ starttermineImMonat }}</td>
+                    <td>{{ wieGeplantGestartetJa }}</td>
+                    <td>{{ wieGeplantGestartetNein }}</td>
+                    
+                    <td>{{ nichtAngetreteneTN }}</td>
+                    <td>{{ vabTN }}</td>
+                    <td>{{ ebTN }}</td>
+                    <td>{{ durchnchnittstermineTNwithEB|number_format(2, ',') }}</td>
+                    <td>{{ allTerminCounter }}</td>
+                </tr>                 
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

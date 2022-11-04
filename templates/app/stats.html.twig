@@ -35,7 +35,8 @@
                         <th class='lightyellow_bg'>Monat</th>
                         <th class='lightyellow_bg'>Eingeladene TN im Monat</th>
                         <th class='lila_bg'>Starttermin im Monat</th>
-                        <th class='lightyellow_bg'>Wie geplant gestartet <br>(Ja/Nein)</th>
+                        <th class='lightyellow_bg'>Wie geplant gestartet <br>(Ja)</th>
+                        <th class='lightyellow_bg'>Wie geplant gestartet <br>(Nein)</th>
                         <th class='lila_bg'>Aktive TN <br>[taggleich]</th>
                         <th class='lightgreen_bg'>Nicht angetretene TN im Monat</th>
                         <th class='lightyellow_bg'>Angetretene TN, <br>aber vorzeitig abgebrochen / beendet</th>
@@ -54,6 +55,7 @@
                     {% for month in allMonths %}
                     <tr>
                         <td>{{ month }}</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

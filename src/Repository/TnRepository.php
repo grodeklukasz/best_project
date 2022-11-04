@@ -39,6 +39,56 @@ class TnRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllByDetails(array $criteria=null)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT *
+            FROM tn
+            LEFT JOIN termin
+            ON tn.id = termin.tn_id
+            LEFT JOIN termin_type
+            ON termin_type.id = termin.termintype_id
+        ';
+
+        if($criteria!=Null){
+            $sql = $sql . " WHERE ";
+            foreach($criteria as $key=>$value){
+                $sql = $sql . $key . "= :" . $key . " AND ";
+            }
+        }
+            $sql = rtrim($sql, " AND ");
+            
+            $stmt = $conn->prepare($sql);
+
+            $resultSet = $stmt->executeQuery($criteria);
+
+            return $resultSet->fetchAllAssociative();
+    }
+
+    public function findAllAsArray(array $criteria=null)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+            SELECT *
+            FROM tn
+        ';
+
+        if($criteria!=Null){
+            $sql = $sql . " WHERE ";
+            foreach($criteria as $key=>$value){
+                $sql = $sql . $key . "= :" . $key . " AND ";
+            }
+        }
+            $sql = rtrim($sql, " AND ");
+            
+            $stmt = $conn->prepare($sql);
+
+            $resultSet = $stmt->executeQuery($criteria);
+
+            return $resultSet->fetchAllAssociative();
+    }
+
 //    /**
 //     * @return Tn[] Returns an array of Tn objects
 //     */

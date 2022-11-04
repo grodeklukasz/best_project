@@ -39,6 +39,19 @@ class TerminRepository extends ServiceEntityRepository
         }
     }
 
+    public function getAllAsArray(): array 
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql ='SELECT * FROM termin';
+
+        $stmt = $conn->prepare($sql);
+
+        $resultSet = $stmt->executeQuery();
+
+        return $resultSet->fetchAllAssociative();
+    }
+
     public function countTypesOfTermin(int $tnId, int $terminType): array
     {
         $conn = $this->getEntityManager()->getConnection();
@@ -64,6 +77,19 @@ class TerminRepository extends ServiceEntityRepository
 
         return $resultSet->fetchAllAssociative();
 
+    }
+
+    public function countTerminsByTn(int $tn_id): array 
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT Count(*) as counter FROM termin where tn_id = :tn_id';
+
+        $stmt = $conn->prepare($sql);
+
+        $resultSet = $stmt->executeQuery(['tn_id'=>$tn_id]);
+
+        return $resultSet->fetchAllAssociative();
     }
 
 //    /**

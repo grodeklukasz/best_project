@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<table class="table table-bordered">
+<tr>
+    <th>Nachname</th>
+    <th>Vorname</th>
+    <th>Starttermin</th>
+    <th>Termindatum</th>
+    <th>Termin_name</th>
+    <th>Grund Ausgeschieden</th>
+    <th>Bemerkung</th>
+    </tr>
+{% for tn in tns %}
+    <tr>
+    <td>{{ tn.nachname }}</td>
+    <td>{{ tn.vorname }}</td>
+    <td>{{ tn.starttermin|date("d.m.Y") }}</td>
+    <td>{{ tn.termindatum|date("d.m.Y") }}</td>
+    <td>{{ tn.termin_name }}</td>
+    <td>{{ tn.grund_ausgeschieden }}</td>
+    <td>{{ tn.bemerkung }}</td>
+    </tr>
+{% endfor %}
+</table>
+<h4>{{ monat }}.{{ jahr }}</h4>
+<hr />
+<p>eingeladene TN: {{ eingeladeneTN }}</p>
+<p>Starttermin im Monat: {{ startterminImMonat }}</p>
+<p>wie geplant gestartet Ja: {{ wieGeplantGestartetJa }}</p>
+<p>wie geplant gestartet Nein: {{ wieGeplantGestartetNein }}</p>
+<p>Nicht angetretene TN (NA): {{ nichtAngetreteneTN }}</p>
+<p>(VAB): {{ vabTN }}</p>
+<p>(EB): {{ ebTN }}</p>
+{% endblock %}
