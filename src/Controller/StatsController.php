@@ -137,24 +137,76 @@ class StatsController extends AbstractController
         ]);
       }
       /**
-       * @Route("/statistik3", name="app_stats3")
+       * @Route("/statistik3/{jahr}", name="app_stats3")
        */
-      public function stats3(TnRepository $tnRepository, TerminRepository $terminRepository): Response 
+      public function stats3(int $jahr, TnRepository $tnRepository, TerminRepository $terminRepository): Response 
       {
-        $jahr = 2021;
-        $monat = 9;
 
-        $starttermineImMonat = 0;
-        $eingeladeneTNimMonat = 0;
+        //$jahr = 2021;
+       
+        $bigExportArray = array();
 
-        $nichtAngetreteneTN = 0;
-        $vabTN = 0;
-        $ebTN = 0;
+            //for all months of the year
+
+            for($monat=1;$monat<13;$monat++){
+
+                //find all Termins "Einladung"
+                $allStartTermine = $terminRepository->findBy(['termintype'=>25]);
+
+                // count all Einladung Termine for Year and Month
+
+                $eingeladeneTNimMonat = $this->enFunction1($jahr, $monat, $allStartTermine);
+
+                //get an Array with two elements: wie Geplant Gestartet Ja / wie Geplant Gestartet Nein
+
+                $wieGeplantGestartet = $this->enFunction2($jahr,$monat,$tnRepository);
+
+                //Array with starttermineImMonat, nichtAngetreteneTN, vabTN, ebTN
+                $statsArray1= $this->enFunction3($jahr,$monat,$tnRepository, $terminRepository);
+
+                //Durchnchnittstermine der erfolgreich beendeten TN
+            
+                $durchnchnittstermineTNwithEB = $this->enFunction4($statsArray1['allTNTerminsWithEB'],$statsArray1['ebTN']);
+
+                //Termine [ingesamt] im Monat vergeben [betrifft auch Folgemonat]        
+
+                $allTerminCounter = $this->enFunction5($jahr, $monat, $terminRepository);
+
+                $exportArray = [
+                    'searchDate' => $monat . "." . $jahr,
+                    'monat' => $monat,
+                    'starttermineImMonat' => $statsArray1['starttermineImMonat'],
+                    'eingeladeneTNimMonat' => $eingeladeneTNimMonat,
+                    'wieGeplantGestartetJa' => $wieGeplantGestartet['wieGeplantGestartetJa'],
+                    'wieGeplantGestartetNein' => $wieGeplantGestartet['wieGeplantGestartetNein'],
+                    'ebTN' => $statsArray1['ebTN'],
+                    'durchnchnittstermineTNwithEB' => $durchnchnittstermineTNwithEB,
+                    'allTerminCounter' => $allTerminCounter,
+                    'tns' => $statsArray1['selectedTn'],
+                    'nichtAngetreteneTN' => $statsArray1['nichtAngetreteneTN'],
+                    'vabTN' => $statsArray1['vabTN'],
+                    'ebTN' => $statsArray1['ebTN'],
+                    'verschoben' => $this->enFunction6($jahr,$monat,$terminRepository)
+                ];
+
+                
+                $bigExportArray[] = $exportArray;
+
+            }
 
         
-        //find all Termins "Einladung"
+        return $this->render('stats\bigExportArray.html.twig',[
+            'export' => $bigExportArray,
+        ]);
+      }
 
-        $allStartTermine = $terminRepository->findBy(['termintype'=>25]);
+      /**
+       * Functions for Stats
+       */
+
+      public function enFunction1(int $jahr, int $monat, array $allStartTermine): int
+      {
+        $eingeladeneTNimMonat = 0;
 
         // count all Einladung Termine for Year and Month
         foreach($allStartTermine as $allStartTermin){
@@ -163,7 +215,13 @@ class StatsController extends AbstractController
             }
         }
 
-        //find all Tn with Termins
+        return $eingeladeneTNimMonat;
+      }
+      
+      public function enFunction2(int $jahr, int $monat, TnRepository $tnRepository): array
+      {
+        
+        //find all Tn with Termins Enladung
 
         $allTnWithTermine = $tnRepository->findAllByDetails(['termin_name'=>'Einladung']);
 
@@ -174,6 +232,8 @@ class StatsController extends AbstractController
 
             $startterminAsDate = new \DateTime($tnwithtermin['starttermin']); 
             $einladungDatumAsDate = new \DateTime($tnwithtermin['termindatum']);
+        
+        //!!!!! Jahr !!!!!
 
             if(($startterminAsDate->format('Y')==$jahr)&&($startterminAsDate->format('m')==$monat)){
                 if($tnwithtermin['starttermin']==$tnwithtermin['termindatum']){
@@ -186,26 +246,44 @@ class StatsController extends AbstractController
 
                 }
             }
-             
-
+            
         }
 
+        return [
+            'wieGeplantGestartetJa'=>$wieGeplantGestartetJa, 
+            'wieGeplantGestartetNein'=>$wieGeplantGestartetNein
+        ];
 
+      }
+
+      public function enFunction3(int $jahr, int $monat, TnRepository $tnRepository, TerminRepository $terminRepository):array
+      {
         //find all Tn as Array
+
+        $starttermineImMonat = 0;
+
+        $nichtAngetreteneTN = 0;
+        $vabTN = 0;
+        $ebTN = 0;
 
         $allTns = $tnRepository->findAllAsArray([]);
 
         //counter all TN's Termins with EB
         $allTNTerminsWithEB = 0;
 
+        //
+        $selectedTn = array();
+
         foreach($allTns as $tn){
             
             $startterminAsDate = new \DateTime($tn['starttermin']); 
 
             //check startterminDate if match to query
+        
+            // !!!!! Jahr !!!!!
 
             if(($startterminAsDate->format('Y')==$jahr)&&($startterminAsDate->format('m')==$monat)){
-               
+            
                 $starttermineImMonat++;
                 $selectedTn[] = $tn; 
 
@@ -231,43 +309,72 @@ class StatsController extends AbstractController
             }
         }
 
-        //Durchnchnittstermine der erfolgreich beendeten TN
-        $durchnchnittstermineTNwithEB = $allTNTerminsWithEB / $ebTN;
+        return [
+            'starttermineImMonat' => $starttermineImMonat,
+            'nichtAngetreteneTN' => $nichtAngetreteneTN,
+            'vabTN' => $vabTN,
+            'ebTN' => $ebTN,
+            'allTNTerminsWithEB' => $allTNTerminsWithEB,
+            'selectedTn' => $selectedTn
+        ];
+      }
 
+      //Durchnchnittstermine der erfolgreich beendeten TN
+      public function enFunction4(int $allTNTerminsWithEB, int $ebTN):float
+      {
+        $durchnchnittstermineTNwithEB = 0;
+
+        if($ebTN!=0)
+            $durchnchnittstermineTNwithEB = $allTNTerminsWithEB / $ebTN;
+        
+       return $durchnchnittstermineTNwithEB;
+
+      }
+
+      public function enFunction5(int $jahr, int $monat, TerminRepository $terminRepository):int
+      {
         //Termine [ingesamt] im Monat vergeben [betrifft auch Folgemonat]
         //get All termins as Array
-        $allTermins = $terminRepository->getAllAsArray();
+            $allTermins = $terminRepository->getAllAsArray();
+            
+            // Termin counter
+
+            $allTerminCounter = 0;
+
+            foreach($allTermins as $termin){
+
+                $terminAsDate = new \DateTime($termin['termindatum']);
+            
+                // !!!!! Jahr !!!!!
+
+                if(($terminAsDate->format('Y')==$jahr)&&($terminAsDate->format('m')==$monat)){
+                    $allTerminCounter++;
+                }
+
+            }
+        return $allTerminCounter;
+      }
+
+      // get All verschoben Termine
+      public function enFunction6(int $jahr, int $monat, TerminRepository $terminRepository):int 
+      {
         
-        // Termin counter
+        $verschobenTermins = 0;
 
-        $allTerminCounter = 0;
+        $termins = $terminRepository->getAllAsArrayWithParams(['verschoben'=>1]);
 
-        foreach($allTermins as $termin){
+        foreach($termins as $termin){
 
             $terminAsDate = new \DateTime($termin['termindatum']);
 
             if(($terminAsDate->format('Y')==$jahr)&&($terminAsDate->format('m')==$monat)){
-                $allTerminCounter++;
+                $verschobenTermins++;
             }
-
+            
         }
 
+        return $verschobenTermins;
 
-        return $this->render('stats\stats3.html.twig',[
-            'searchDate' => $monat . "." . $jahr,
-            'monat' => $monat,
-            'starttermineImMonat' => $starttermineImMonat,
-            'eingeladeneTNimMonat' => $eingeladeneTNimMonat,
-            'wieGeplantGestartetJa' => $wieGeplantGestartetJa,
-            'wieGeplantGestartetNein' => $wieGeplantGestartetNein,
-            'ebTN' => $ebTN,
-            'durchnchnittstermineTNwithEB' => $durchnchnittstermineTNwithEB,
-            'allTerminCounter' => $allTerminCounter,
-            'tns' => $selectedTn,
-            'nichtAngetreteneTN' => $nichtAngetreteneTN,
-            'vabTN' => $vabTN,
-            'ebTN' => $ebTN
-        ]);
       }
 }
 

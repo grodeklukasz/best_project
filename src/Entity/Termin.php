@@ -39,6 +39,11 @@ class Termin
      */
     private $bemerkung;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $verschoben;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -88,6 +93,18 @@ class Termin
     public function setBemerkung(?string $bemerkung): self
     {
         $this->bemerkung = $bemerkung;
+
+        return $this;
+    }
+
+    public function isVerschoben(): ?bool
+    {
+        return $this->verschoben;
+    }
+
+    public function setVerschoben(?bool $verschoben): self
+    {
+        $this->verschoben = $verschoben;
 
         return $this;
     }

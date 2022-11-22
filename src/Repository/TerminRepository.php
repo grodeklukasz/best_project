@@ -52,6 +52,27 @@ class TerminRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();
     }
 
+    public function getAllAsArrayWithParams(array $criteria):array 
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = 'SELECT * FROM termin';
+
+        if($criteria!=Null){
+            $sql = $sql . " WHERE ";
+            foreach($criteria as $key=>$value){
+                $sql = $sql . $key . "= :" . $key . " AND ";
+            }
+        }
+            $sql = rtrim($sql, " AND ");
+
+        $stmt = $conn->prepare($sql);
+
+        $resultSet = $stmt->executeQuery($criteria);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
     public function countTypesOfTermin(int $tnId, int $terminType): array
     {
         $conn = $this->getEntityManager()->getConnection();

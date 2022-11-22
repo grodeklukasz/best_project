@@ -13,7 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 
 
 class TerminCrudController extends AbstractCrudController
@@ -30,6 +32,7 @@ class TerminCrudController extends AbstractCrudController
     {
         return $filters
         ->add(EntityFilter::new('tn'))
+        ->add(BooleanFilter::new('verschoben'))
         ;
     }
     public function configureActions(Actions $actions): Actions 
@@ -50,6 +53,7 @@ class TerminCrudController extends AbstractCrudController
         yield AssociationField::new('tn','Teilnehmer');
         yield DateField::new('termindatum')->setFormat('dd.MM.yyyy');;
         yield AssociationField::new('termintype','Termin Type');
+        yield BooleanField::new('verschoben', 'Verschoben?')->hideOnIndex();
         yield TextareaField::new('bemerkung');
     }
     

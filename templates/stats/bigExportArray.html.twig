@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<a href="{{ path('app_app')}}">back to home</a>
+
+<div class='row'>
+    <table class='table table-hover table-bordered'>
+        <thead>
+            <tr>
+                <th>Monat/Jahr</th>
+                <th class='lightblue_bg'>Eingeladene TN im Monat</th>
+                <th class='lila_bg'>Starttermin im Monat</th>
+                <th class='lightyellow_bg'>wie Geplant Gestartet Ja</th>
+                <th class='lightyellow_bg'>wie Geplant Gestartet Nein</th>    
+                <th class='lightgreen_bg'>Nicht angetretene TN<br> im Monat<br> [NA]</th>
+                <th class='lightyellow_bg'>Angetretene TN, <br>aber vorzeitig abgebrochen / beendet <br>[VAB]</th>
+                <th class='lightyellow_bg'>TN, erfolgreich beendet <br> [EB]</th>
+                <th class='green_bg'>Durchnchnittstermine <br> der erfolgreich beendeten TN</th>
+                <th class='lila_bg'>Termine [ingesamt] <br> im Monat vergeben <br> [betrifft auch Folgemonat]</th>
+                <th class='lila_bg'>Termine [ingesamt] <br> im Monat verschoben <br> [betrifft auch Folgemonat]</th>
+                <th class='lightblue_bg'>Ausgeschiedene TN <br> [insgesamt] <br> im Monat</th>
+                <th class='orange_bg'>Durchschnittl. <br> Verweildauer in Wochen / TN [ingesamt] </th>
+                <th class='orange_bg'>Durchschnittl. <br> Verweildauer in Wochen / TN [nur EB]</th>
+                <th class='red_bg'>Durchschnittl. <br> Wartezeit Zuweisung bis Einladung <br> [Arbeitstage]</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in export %}
+            <tr>
+                <td>{{ row.searchDate}}</td>
+                <td class='lightblue_bg'>{{ row.eingeladeneTNimMonat}}</td>
+                <td class='lila_bg'>{{ row.starttermineImMonat }}</td>
+                <td class='lightyellow_bg'>{{ row.wieGeplantGestartetJa }}</td>
+                <td class='lightyellow_bg'>{{ row.wieGeplantGestartetNein }}</td>
+                <td class='lightgreen_bg'>{{ row.nichtAngetreteneTN }}</td>
+                <td class='lightyellow_bg'>{{ row.vabTN }}</td>
+                <td class='lightyellow_bg'>{{ row.ebTN }}</td>
+                <td class='green_bg'>{{ row.durchnchnittstermineTNwithEB|number_format(2, ',') }}</td>
+                <td class='lila_bg'>{{ row.allTerminCounter }}</td>
+                <td class='lila_bg'>{{row.verschoben}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

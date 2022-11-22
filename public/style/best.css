@@ -15,6 +15,7 @@ html{
 }
 .table{
     border: 1px solid black !important;
+    text-align: center;
 }
 .table th{
     text-align: center;
@@ -34,24 +35,24 @@ html{
 }
 
 .lila_bg{
-    background-color: violet !important;
+    background-color: rgba(238, 130, 238, 0.39) !important;
 }
 .lightyellow_bg{
-    background-color: lightyellow !important;
+    background-color: rgba(255, 255, 224, 0.39) !important;
 }
 .lightgreen_bg{
-    background-color: lightgreen !important;
+    background-color: rgba(144, 238, 144, 0.39) !important;
 }
 .green_bg{
-    background-color: darkgreen !important;
-    color: white;
+    background-color: rgba(0, 100, 0, 0.39) !important;
+    color: black;
 }
 .lightblue_bg{
-    background-color: lightblue !important;
+    background-color: rgba(173, 216, 230, 0.39) !important;
 }
 .red_bg{
-    background-color: red !important;
+    background-color: rgba(255, 0, 0, 0.39) !important;
 }
 .orange_bg{
-    background-color: orange !important;
+    background-color: rgba(255, 165, 0, 0.39) !important;
 }
