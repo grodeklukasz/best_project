@@ -141,8 +141,6 @@ class StatsController extends AbstractController
        */
       public function stats3(int $jahr, TnRepository $tnRepository, TerminRepository $terminRepository): Response 
       {
-
-        //$jahr = 2021;
        
         $bigExportArray = array();
 
@@ -172,6 +170,9 @@ class StatsController extends AbstractController
 
                 $allTerminCounter = $this->enFunction5($jahr, $monat, $terminRepository);
 
+                $durchschnittlArray = $this->enFunction8($jahr,$monat,$tnRepository, $terminRepository);
+            
+
                 $exportArray = [
                     'searchDate' => $monat . "." . $jahr,
                     'monat' => $monat,
@@ -186,7 +187,10 @@ class StatsController extends AbstractController
                     'nichtAngetreteneTN' => $statsArray1['nichtAngetreteneTN'],
                     'vabTN' => $statsArray1['vabTN'],
                     'ebTN' => $statsArray1['ebTN'],
-                    'verschoben' => $this->enFunction6($jahr,$monat,$terminRepository)
+                    'verschoben' => $this->enFunction6($jahr,$monat,$terminRepository),
+                    'ausgeschieden' => $this->enFunction7($jahr,$monat,$tnRepository),
+                    'durchschnittl_insgesamt'=>$durchschnittlArray['durchschnittl_insgesamt'],
+                    'durchschnittl_nurEB'=>$durchschnittlArray['durchschnittl_nurEB'],
                 ];
 
                 
@@ -376,5 +380,147 @@ class StatsController extends AbstractController
         return $verschobenTermins;
 
       }
+
+      //get Ausgeschiedene TN [insgesamt]  im Monat
+
+      public function enFunction7(int $jahr, int $monat, TnRepository $tnRepository):int 
+      {
+        $ausgeschiedeneTn = 0;
+        
+        $tns = $tnRepository->findAllAsArray();
+
+        foreach($tns as $tn){
+
+            $terminAsDate = new \DateTime($tn['ausgeschieden']);
+
+            if(($terminAsDate->format('Y')==$jahr)&&($terminAsDate->format('m')==$monat)){
+                $ausgeschiedeneTn++;
+            }
+
+        }
+
+        return $ausgeschiedeneTn;
+
+      }
+
+      //Durchschnittl. Verweildauer in Wochen / TN [ingesamt] 
+
+      public function enFunction8(int $jahr, int $monat, TnRepository $tnRepository, TerminRepository $terminRepository):array 
+      {
+        $allVAB = 0;
+        $allEB = 0;
+
+        $tncounter = 0;
+        $tncounterEB = 0;
+
+        $bigWeeksSrednia = 0;
+        $bigWeeksNurEB = 0;
+
+
+        $tnVAB = $tnRepository->findAllAsArray(['grund_ausgeschieden'=>'VAB']);
+        
+        $tnEB = $tnRepository->findAllAsArray(['grund_ausgeschieden'=>'EB']);
+
+        foreach($tnEB as $tn){
+            
+            $terminCount = $terminRepository->countTerminsByTn($tn['id']);
+
+            $terminAsDate = new \DateTime($tn['ausgeschieden']);
+
+            if(($terminAsDate->format('Y')==$jahr)&&($terminAsDate->format('m')==$monat)){
+
+                $tncounter++;
+                $tncounterEB++;
+
+                //set Termins as DateTime
+                $startTerminAsDate = new \DateTime($tn['starttermin']);
+                $endTerminAsDate = new \DateTime($tn['ausgeschieden']);
+                
+                //make interval between starttermin and ausgeschieden termins
+                $interval = $startTerminAsDate->diff($endTerminAsDate);
+
+                //make difference as days
+                $diffdays = $interval->format('%R%a');
+
+                //make difference as weeks
+                $diffweeks = number_format((intval($interval->format('%R%a'))/7), 2, '.','');
+
+                /*
+                echo "<div class='container-fluid'>";
+                echo "----- EB: ";
+                echo $terminAsDate->format('Y').".".$terminAsDate->format('m').": ";
+                echo $tn['nachname'];
+                echo " - ";
+                echo $terminCount[0]['counter'];
+                echo " Days: " . $diffdays .", ";
+                echo "Weeks: " . $diffweeks ."<br>";
+                echo "</div>";
+                */
+                $bigWeeksSrednia = (float)$bigWeeksSrednia+$diffweeks;
+                $bigWeeksNurEB = (float)$bigWeeksNurEB+$diffweeks;
+            }
+
+        }
+        
+        foreach($tnVAB as $tn){
+
+            $terminCount = $terminRepository->countTerminsByTn($tn['id']);
+
+            $terminAsDate = new \DateTime($tn['ausgeschieden']);
+
+            if(($terminAsDate->format('Y')==$jahr)&&($terminAsDate->format('m')==$monat)){
+
+                $tncounter++;
+
+                //set Termins as DateTime
+                $startTerminAsDate = new \DateTime($tn['starttermin']);
+                $endTerminAsDate = new \DateTime($tn['ausgeschieden']);
+
+                //make interval between starttermin and ausgeschieden termins
+                $interval = $startTerminAsDate->diff($endTerminAsDate);
+                
+                //make difference as days
+                $diffdays = $interval->format('%R%a');
+                
+                //make difference as weeks
+                $diffweeks = number_format((intval($interval->format('%R%a'))/7), 2, '.','');
+
+                /*
+                echo "<div class='container-fluid'>";
+                echo "----- VAB: ";
+                echo $terminAsDate->format('Y').".".$terminAsDate->format('m').": ";
+                echo $tn['nachname'];
+                echo " - ";
+                echo $terminCount[0]['counter'];
+                echo " Days: " . $diffdays .", ";
+                echo "Weeks: " . $diffweeks ."<br>";
+                echo "</div>";
+                */
+                $bigWeeksSrednia = (float)$bigWeeksSrednia+$diffweeks;
+
+            }
+
+        }
+
+        $durchschnittl_insgesamt = $tncounter>0 ? $bigWeeksSrednia/$tncounter : 0;
+        $durchschnittl_nurEB = $tncounter>0 ? $bigWeeksNurEB/$tncounterEB : 0;
+
+        /*
+        echo "<br><strong>".$tncounter." <br>";
+        echo "Verweildauer in Wochen / TN [ingesamt]: ".($tncounter>0 ? $bigWeeksSrednia/$tncounter : 0)."<br>";
+        echo "Durchschnittl. Verweildauer in Wochen / TN [nur EB]: ".($tncounter>0 ? $bigWeeksNurEB/$tncounterEB : 0)."</strong><br><br>";
+        echo "--------------------------------------------------------------------------------<br>";
+        */
+
+        $exportarray = [
+            'durchschnittl_insgesamt' => $durchschnittl_insgesamt,
+            'durchschnittl_nurEB' => $durchschnittl_nurEB
+        ];
+
+        return $exportarray;
+       
+      }
+
+
 }
 

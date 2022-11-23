@@ -66,7 +66,7 @@ class TnRepository extends ServiceEntityRepository
             return $resultSet->fetchAllAssociative();
     }
 
-    public function findAllAsArray(array $criteria=null)
+    public function findAllAsArray(array $criteria=[])
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = '

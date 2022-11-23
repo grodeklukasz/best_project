@@ -38,10 +38,10 @@
                 <td class='green_bg'>{{ row.durchnchnittstermineTNwithEB|number_format(2, ',') }}</td>
                 <td class='lila_bg'>{{ row.allTerminCounter }}</td>
                 <td class='lila_bg'>{{row.verschoben}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='lightblue_bg'>{{row.ausgeschieden}}</td>
+                <td class='orange_bg'>{{row.durchschnittl_insgesamt}}</td>
+                <td class='orange_bg'>{{row.durchschnittl_nurEB}}</td>
+                <td class='red_bg'></td>
             </tr>
         {% endfor %}
         </tbody>
