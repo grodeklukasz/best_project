@@ -4,7 +4,7 @@
 <a href="{{ path('app_app')}}">back to home</a>
 
 <div class='row'>
-    <table class='table table-hover table-bordered'>
+    <table class='table table-striped table-bordered'>
         <thead>
             <tr>
                 <th>Monat/Jahr</th>
@@ -28,20 +28,20 @@
         {% for row in export %}
             <tr>
                 <td>{{ row.searchDate}}</td>
-                <td class='lightblue_bg'>{{ row.eingeladeneTNimMonat}}</td>
-                <td class='lila_bg'>{{ row.starttermineImMonat }}</td>
-                <td class='lightyellow_bg'>{{ row.wieGeplantGestartetJa }}</td>
-                <td class='lightyellow_bg'>{{ row.wieGeplantGestartetNein }}</td>
-                <td class='lightgreen_bg'>{{ row.nichtAngetreteneTN }}</td>
-                <td class='lightyellow_bg'>{{ row.vabTN }}</td>
-                <td class='lightyellow_bg'>{{ row.ebTN }}</td>
-                <td class='green_bg'>{{ row.durchnchnittstermineTNwithEB|number_format(2, ',') }}</td>
-                <td class='lila_bg'>{{ row.allTerminCounter }}</td>
-                <td class='lila_bg'>{{row.verschoben}}</td>
-                <td class='lightblue_bg'>{{row.ausgeschieden}}</td>
-                <td class='orange_bg'>{{row.durchschnittl_insgesamt}}</td>
-                <td class='orange_bg'>{{row.durchschnittl_nurEB}}</td>
-                <td class='red_bg'></td>
+                <td>{{ row.eingeladeneTNimMonat}}</td>
+                <td>{{ row.starttermineImMonat }}</td>
+                <td>{{ row.wieGeplantGestartetJa }}</td>
+                <td>{{ row.wieGeplantGestartetNein }}</td>
+                <td>{{ row.nichtAngetreteneTN }}</td>
+                <td>{{ row.vabTN }}</td>
+                <td>{{ row.ebTN }}</td>
+                <td>{{ row.durchnchnittstermineTNwithEB|number_format(2, ',') }}</td>
+                <td>{{ row.allTerminCounter }}</td>
+                <td>{{row.verschoben}}</td>
+                <td>{{row.ausgeschieden}}</td>
+                <td>{{row.durchschnittl_insgesamt}}</td>
+                <td>{{row.durchschnittl_nurEB}}</td>
+                <td></td>
             </tr>
         {% endfor %}
         </tbody>

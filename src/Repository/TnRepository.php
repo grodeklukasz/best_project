@@ -89,6 +89,37 @@ class TnRepository extends ServiceEntityRepository
             return $resultSet->fetchAllAssociative();
     }
 
+    public function findAllDatesByMonthAndYear(int $jahr, int $monat, string $terminType=''){
+
+        
+        $monatAsString = $monat<10 ? "0".$monat : $monat;
+        
+        $date = $jahr.'-'.$monatAsString.'%';
+
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "
+        SELECT *
+        FROM tn
+        LEFT JOIN termin
+        ON tn.id = termin.tn_id
+        LEFT JOIN termin_type
+        ON termin_type.id = termin.termintype_id
+        WHERE termindatum LIKE '".$date."'
+        ";
+
+        if($terminType!=''){
+            $sql = $sql . " AND termin_name = '".$terminType."'";
+        }
+
+        $stmt = $conn->prepare($sql);
+
+        $resultSet = $stmt->executeQuery();
+
+        return $resultSet->fetchAllAssociative();
+
+    }
+
 //    /**
 //     * @return Tn[] Returns an array of Tn objects
 //     */

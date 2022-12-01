@@ -139,9 +139,10 @@ class StatsController extends AbstractController
       /**
        * @Route("/statistik3/{jahr}", name="app_stats3")
        */
-      public function stats3(int $jahr, TnRepository $tnRepository, TerminRepository $terminRepository): Response 
+      public function stats3(int $jahr, TnRepository $tnRepository, TerminRepository $terminRepository, TerminTypeRepository $terminTypeRepo): Response 
       {
-       
+        
+
         $bigExportArray = array();
 
             //for all months of the year
@@ -149,7 +150,7 @@ class StatsController extends AbstractController
             for($monat=1;$monat<13;$monat++){
 
                 //find all Termins "Einladung"
-                $allStartTermine = $terminRepository->findBy(['termintype'=>25]);
+                $allStartTermine = $terminRepository->findBy(['termintype'=>$this->getTerminId($terminTypeRepo, 'Einladung')]);
 
                 // count all Einladung Termine for Year and Month
 
@@ -227,7 +228,7 @@ class StatsController extends AbstractController
         
         //find all Tn with Termins Enladung
 
-        $allTnWithTermine = $tnRepository->findAllByDetails(['termin_name'=>'Einladung']);
+        $allTnWithTermine = $tnRepository->findAllByDetails(['termin_name'=>'Einladung','verschoben'=>0]);
 
         $wieGeplantGestartetJa = 0;
         $wieGeplantGestartetNein = 0;
@@ -240,6 +241,7 @@ class StatsController extends AbstractController
         //!!!!! Jahr !!!!!
 
             if(($startterminAsDate->format('Y')==$jahr)&&($startterminAsDate->format('m')==$monat)){
+            
                 if($tnwithtermin['starttermin']==$tnwithtermin['termindatum']){
 
                     $wieGeplantGestartetJa++;
@@ -503,7 +505,7 @@ class StatsController extends AbstractController
         }
 
         $durchschnittl_insgesamt = $tncounter>0 ? $bigWeeksSrednia/$tncounter : 0;
-        $durchschnittl_nurEB = $tncounter>0 ? $bigWeeksNurEB/$tncounterEB : 0;
+        $durchschnittl_nurEB = $tncounterEB>0 ? $bigWeeksNurEB/$tncounterEB : 0;
 
         /*
         echo "<br><strong>".$tncounter." <br>";
@@ -519,6 +521,35 @@ class StatsController extends AbstractController
 
         return $exportarray;
        
+      }
+
+      //Durchschnittl. Wartezeit Zuweisung bis Einladung [Arbeitstage]
+
+      public function enFunction9(int $jahr, int $monat, TnRepository $tnRepository, TerminRepository $terminRepository, TerminTypeRepository $terminTypeRepo):int
+      {
+
+        $terminTypeId = $this->getTerminId($terminTypeRepo, 'Zuweisung');
+
+        $jahr = 2021;
+        $monat = 9;
+
+        $testdata = $tnRepository->findAllDatesByMonthAndYear($jahr, $monat);
+       
+        return $terminTypeId;
+
+      }
+
+      //get termin id by name
+
+      private function getTerminId(TerminTypeRepository $terminTypeRepo, string $terminName):int 
+      {
+        $terminType = $terminTypeRepo->findBy(['terminName'=>$terminName]);
+
+        if(count($terminType)==null){
+            die();
+        }
+            
+        return $terminType[0]->getId();
       }
 
 

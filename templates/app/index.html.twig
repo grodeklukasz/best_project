@@ -8,10 +8,11 @@
     <p>
     <a href="{{ path('app_stats') }}">Statistik</a>
     <a href="{{ path('app_stats2') }}">Statistik 2</a>
+    <a href="{{ path('app_stats3',{'jahr': '2021'}) }}">Statistik 3</a>
     </p>
     <hr />
-    <table class="table table-bordered table-hover">
-        <tbody>
+    <table class="table table-striped">
+        <thead>
         <tr>
             <th>Nachname</th>
             <th>Vorname</th>
@@ -25,9 +26,9 @@
             <th>Diff Weeks</th>
             <th>Aktiv</th>
         </tr>
-        </tbody>
-    {% for tn in exportData %}
+        </thead>
         <tbody>
+        {% for tn in exportData %}
         <tr>
             <td><a href="{{ path('app_tn', { id: tn.id }) }}">{{ tn.nachname }}</a></td>
             <td>{{ tn.vorname }}</td>
@@ -52,9 +53,9 @@
             <td 
             class=
                 {% if tn.aktiv %} 
-                    "table-success"
+                    "lightgreen_bg"
                     {% else %}
-                    "table-danger"
+                    "orange_bg"
                 {% endif %}
             
             >
@@ -62,8 +63,8 @@
             {% if(tn.aktiv) %} ja {% else %} nein {% endif %}
             </td>
         </tr>
-        </tbody>
     {% endfor %}
+        </tbody>
     </table>
 {% endblock %}
 

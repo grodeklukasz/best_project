@@ -47,7 +47,7 @@ class TnCrudController extends AbstractCrudController
             "Vorzeitig beendet nach RS mit FM" => "VAB",
             "Nicht angetreten-RS an FM" => "NA",
             "FM von Maßnahme abgemeldet" => "NA"
-        ])->hideOnIndex();
+        ]);
         yield BooleanField::new('status');
         yield TextareaField::new('bemerkung')->hideOnIndex();
 

@@ -13,10 +13,7 @@ html{
     font-family: Arial;
     background-color: white;  
 }
-.table{
-    border: 1px solid black !important;
-    text-align: center;
-}
+
 .table th{
     text-align: center;
     vertical-align: text-top;
