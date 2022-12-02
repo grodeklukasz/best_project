@@ -14,7 +14,7 @@ use App\Repository\TerminTypeRepository;
 class AppController extends AbstractController
 {
     /**
-     * @Route("/", name="app_app")
+     * @Route("/app", name="app_app")
      */
     public function index(TnRepository $tnRepository): Response
     {   

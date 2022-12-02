@@ -44,6 +44,21 @@ class Jobcoach
      */
     private $tns;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $kennwort;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive;
+
     public function __construct()
     {
         $this->tns = new ArrayCollection();
@@ -133,6 +148,42 @@ class Jobcoach
                 $tn->setJobcoach(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getKennwort(): ?string
+    {
+        return $this->kennwort;
+    }
+
+    public function setKennwort(string $kennwort): self
+    {
+        $this->kennwort = $kennwort;
+
+        return $this;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

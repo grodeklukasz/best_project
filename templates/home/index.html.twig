@@ -1,0 +1,22 @@
+{% extends 'home_base.html.twig' %}
+
+{% block title %}BeST App Ever!{% endblock %}
+
+{% block body %}
+    <div class='container'>
+        <div class="row">
+            <h3>Anmeldung</h3>
+        </div>
+        {% if(errormsg) %}
+            <div class='row'>
+                <div class='btn btn-warning'>{{ errormsg }}</div>
+            </div>
+        {% endif %}
+        <div class='row'>
+            <div class='col-6'>
+            {{form(login_form)}}
+            </div>
+            <div class='col-6'></div>
+        </div>
+    </div>
+{% endblock %}
