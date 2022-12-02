@@ -13,13 +13,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use App\Service\SessionService;
+
 class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="app_home") 
      */
-    public function index(Request $request, JobcoachRepository $jobcoachRepository): Response
+    public function login(Request $request, JobcoachRepository $jobcoachRepository, SessionService $sessionService, RequestStack $requestStack): Response
     {   
+        //if user is Logged redirect to app main view
+
+        if($sessionService->getSessionValue('islogged'))
+            return $this->redirectToRoute('app_app');
+
         $user = new User();
         $errormsg = '';
 
@@ -49,6 +58,15 @@ class HomeController extends AbstractController
             if(!$jobcoach){
                 
                 $errormsg = 'Benutzer unbekannt.';
+  
+            }else{
+
+        
+                $sessionService->setSessionValues('islogged',True);
+                $sessionService->setSessionValues('email',$jobcoach->getEmail());
+                $sessionService->setSessionValues('role',$jobcoach->getRole());
+
+                return $this->redirectToRoute('app_app');
                 
             }
             
@@ -59,5 +77,16 @@ class HomeController extends AbstractController
             'login_form' => $form->createView(),
             'errormsg' => $errormsg,
         ]);
+    }
+
+    /**
+    * @Route("/logout", name="app_logout") 
+    */
+
+    public function logout(SessionService $sessionService){
+        
+        $sessionService->clear();
+
+        return $this->redirectToRoute('app_home');
     }
 }

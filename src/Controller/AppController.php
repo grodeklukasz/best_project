@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Tn;
+use App\Service\SessionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,8 +17,12 @@ class AppController extends AbstractController
     /**
      * @Route("/app", name="app_app")
      */
-    public function index(TnRepository $tnRepository): Response
+    public function index(TnRepository $tnRepository, SessionService $sessionService): Response
     {   
+        
+        if(!$sessionService->getSessionValue('islogged')){
+            return $this->redirectToRoute('app_home');
+        }
 
         $tns = $tnRepository->findAll();
 
