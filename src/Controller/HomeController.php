@@ -32,6 +32,8 @@ class HomeController extends AbstractController
         $user = new User();
         $errormsg = '';
 
+        $isLogged = False;
+
         $form = $this->createFormBuilder()
         ->add('Email',EmailType::class,[
             'required' => True,
@@ -63,17 +65,20 @@ class HomeController extends AbstractController
 
         
                 $sessionService->setSessionValues('islogged',True);
+                $sessionService->setSessionValues('id',$jobcoach->getId());
+                $sessionService->setSessionValues('nachname',$jobcoach->getNachname());
+                $sessionService->setSessionValues('vorname',$jobcoach->getVorname());
                 $sessionService->setSessionValues('email',$jobcoach->getEmail());
                 $sessionService->setSessionValues('role',$jobcoach->getRole());
 
-                return $this->redirectToRoute('app_app');
+                return $this->redirectToRoute('app_panel');
                 
             }
             
         }
                 
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+            'isLogged' => $isLogged,
             'login_form' => $form->createView(),
             'errormsg' => $errormsg,
         ]);
