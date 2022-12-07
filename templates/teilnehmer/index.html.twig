@@ -1,0 +1,55 @@
+{% extends 'home_base.html.twig' %}
+
+{% block title %}Teilnehmer{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12" style='padding: 25px;background-color: lightyellow;box-shadow: 1px 1px 3px black;'>
+                <div style='height:100%;'>
+                    <div style='text-align: center;'>
+                    <img src='/img/face.png' alt='face' style='height: 80px;'>
+                    <p>[No image]</p>
+                    </div>
+                    <h2>{{ tndetails.nachname }}, {{ tndetails.vorname }}</h2>
+                    <hr />
+                    <h6>Geb. Datum: {{ tndetails.gebdatum|date('d.m.Y') }}</h6>
+                    <h6>Email: {{ tndetails.email }}</h6>
+                    <h6>Rufnummer: {{ tndetails.telefonnummer}}</h6>
+                    <h6>Pseudonym: {{ tndetails.pseudonym}}</h6>
+                    <h6>Starttermin: {{ tndetails.starttermin|date('d.m.Y')}}</h6>
+                    <hr />
+                    <h6>FM: {{ fm.nachname }}, {{ fm.vorname }}</h6>
+                    <h6>Coach: {{ jobcoach.nachname }}, {{ jobcoach.vorname }}</h6>
+                </div>
+            </div>
+            <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12 col-xs-12" style='padding: 25px;'>
+                <h2>Termine</h2>
+                {% if(allTermine|length)==0 %}
+                    <p>Keine Termine gefunden</p>
+                {% else %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Termin (Grund)</th>
+                                <th>Verschoben</th>
+                                <th>Bemerkung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for termin in allTermine %}
+                            <tr>
+                            <td>{{ termin.termindatum|date('d.m.Y') }}</td>
+                            <td>{{ termin.termintype }}</td>
+                            <td>{{ termin.verschoben ? 'Ja' : 'Nein' }}</td>
+                            <td>{{ termin.bemerkung }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

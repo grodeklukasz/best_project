@@ -22,7 +22,12 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="app_home") 
      */
-    public function login(Request $request, JobcoachRepository $jobcoachRepository, SessionService $sessionService, RequestStack $requestStack): Response
+    public function login(
+        Request $request, 
+        JobcoachRepository $jobcoachRepository, 
+        SessionService $sessionService, 
+        RequestStack $requestStack
+        ): Response
     {   
         //if user is Logged redirect to app main view
 
