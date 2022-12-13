@@ -1,0 +1,49 @@
+{% extends 'home_base.html.twig' %}
+
+{% block title %}Termine{% endblock %}
+
+{% block body %}
+    <div class='container'>
+        <div class='row'>
+
+            {% if(alleTermine) %}
+                <table class='table table-bordered table-hover'>
+                    <thead>
+                        <tr>
+                        <th>Teilnehmer</th>
+                        <th>Datum</th>
+                        <th>Termin (Grund)</th>
+                        <th>Bemerkung</th>
+                        <th>Coach</th>
+                        <th>Verschoben</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for termin in alleTermine %}
+                            {% for term in termin %}
+                                <tr>
+                                <td>{{ term.getTn.getNachname()}}</td>
+                                <td>{{ term.getTermindatum()|date('d.m.Y')}}</td>
+                                <td>{{ term.getTerminType().getTerminName()}}</td>
+                                <td>{{ term.getBemerkung() }}</td>
+                                <td>
+                                    {{ term.getTn().getJobcoach().getNachname() }}, 
+                                    {{ term.getTn().getJobcoach().getVorname() }}
+                                
+                                </td>
+                                <td>{{ term.isVerschoben() ? 'Ja' : 'Nein' }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            
+            {% else %}
+            
+                <p>Keine Termine gefunden</p>
+
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

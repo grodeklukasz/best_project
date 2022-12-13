@@ -5,13 +5,16 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12" style='padding: 25px;background-color: lightyellow;box-shadow: 1px 1px 3px black;'>
+            <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12" style='padding: 25px;background-color: lightgrey; color: #052f6e; box-shadow: 1px 1px 3px black;'>
                 <div style='height:100%;'>
                     <div style='text-align: center;'>
                     <img src='/img/face.png' alt='face' style='height: 80px;'>
                     <p>[No image]</p>
                     </div>
-                    <h2>{{ tndetails.nachname }}, {{ tndetails.vorname }}</h2>
+
+                    <h2
+                        class={{ not tndetails.status ? 'text-danger' : '' }}
+                    >{{ tndetails.nachname }}, {{ tndetails.vorname }}</h2>
                     <hr />
                     <h6>Geb. Datum: {{ tndetails.gebdatum|date('d.m.Y') }}</h6>
                     <h6>Email: {{ tndetails.email }}</h6>
@@ -21,13 +24,31 @@
                     <hr />
                     <h6>FM: {{ fm.nachname }}, {{ fm.vorname }}</h6>
                     <h6>Coach: {{ jobcoach.nachname }}, {{ jobcoach.vorname }}</h6>
+                    <h6 class={{ not tndetails.status ? 'red_bg' : '' }}>Status: {{ tndetails.status ? 'Aktiv' : 'Inaktiv' }}</h6>
                 </div>
             </div>
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12 col-xs-12" style='padding: 25px;'>
-                <h2>Termine</h2>
+                <ul class="nav justify-content-end">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Termin zuweisen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{path('app_teilnehmer_edit',{id: tndetails.id})}}">Bearbeiten</a>
+                    </li>
+                    <li class="nav-item">
+                        {% if(tndetails.status) %}
+                            <a class="btn btn-outline-danger" href="{{path('app_teilnehmer_delete',{id: tndetails.id})}}">Delete</a>
+                        {% else %}
+                            <a class="btn btn-outline-success" href="{{path('app_teilnehmer_active',{id: tndetails.id})}}">Zurücksetzen (Aktivieren)</a>
+                        {% endif %}
+                    </li>
+                </ul>
+                <hr />
+                
                 {% if(allTermine|length)==0 %}
                     <p>Keine Termine gefunden</p>
                 {% else %}
+                    <h2>Termine</h2>
                     <table class="table">
                         <thead>
                             <tr>

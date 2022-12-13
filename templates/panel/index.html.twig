@@ -42,7 +42,7 @@
                 </thead>
                 <tbody>
                 {% for tn in allTeilnehmer %}
-                    <tr>
+                    <tr class={{ tn.status!=1 ? 'table-danger' }}>
                         <td>{{ tn.nachname }}</td>
                         <td>{{ tn.vorname }}</td>
                         <td>{{ tn.status==1 ? 'aktiv' : 'nicht aktiv' }}</td>

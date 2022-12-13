@@ -1,0 +1,15 @@
+{% extends 'home_base.html.twig' %}
+
+{% block body %}
+<div class='container'>
+    <div class='row' style='padding: 150px;font-size: 28px; text-align: center;'>
+        <div class='col-2'></div>
+        <div class='col-8'>
+            {{ questionText }}
+            {{ form(deleteForm) }}
+            <a href="{{path('app_panel')}}" class='btn btn-outline-info form-control'>Nein</a>
+        </div>
+        <div class='col-2'></div>
+    </div>
+</div>
+{% endblock %}

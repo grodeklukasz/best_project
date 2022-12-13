@@ -43,8 +43,8 @@ class PanelController extends AbstractController
         $allTn = $tnRespository->findBy(
             [
                 'jobcoach'=>$jobcoachRepository->find($this->user['id']),
-            ],
-            ['status' => 'ASC']
+                'status' => 1
+            ]
         );
 
         return $this->render('panel/index.html.twig', [

@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Service\SessionService;
+
 use App\Repository\TerminTypeRepository;
 use App\Repository\TerminRepository;
 use App\Repository\TnRepository;
@@ -12,6 +14,26 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StatsController extends AbstractController
 {
+    private $user;
+    private $isLogged;
+
+    public function __construct(SessionService $sessionService){
+        
+        if(!$sessionService->getSessionValue('islogged'))
+            return $this->redirectToRoute('app_home');
+        
+        $this->isLogged = True;
+
+        $this->user = [
+            'id' => $sessionService->getSessionValue('id'),
+            'nachname' => $sessionService->getSessionValue('nachname'),
+            'vorname' => $sessionService->getSessionValue('vorname'),
+            'email' => $sessionService->getSessionValue('email'),
+            'role' => $sessionService->getSessionValue('role')
+         ];
+
+    }
+
     /**
      * @Route("/stats", name="app_stats")
      */
@@ -139,9 +161,16 @@ class StatsController extends AbstractController
       /**
        * @Route("/statistik3/{jahr}", name="app_stats3")
        */
-      public function stats3(int $jahr, TnRepository $tnRepository, TerminRepository $terminRepository, TerminTypeRepository $terminTypeRepo): Response 
+      public function stats3(
+        int $jahr, 
+        TnRepository $tnRepository, 
+        TerminRepository $terminRepository, 
+        TerminTypeRepository $terminTypeRepo,
+        SessionService $sessionService
+        ): Response 
       {
-        
+        if(!$sessionService->getSessionValue('islogged'))
+            return $this->redirectToRoute('app_home');
 
         $bigExportArray = array();
 
@@ -199,8 +228,17 @@ class StatsController extends AbstractController
 
             }
 
-        
+            
+            $currentYear = $jahr;
+            $prevYear = $jahr-1;
+            $nextYear = $jahr+1;
+
         return $this->render('stats\bigExportArray.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'currentYear' => $currentYear,
+            'prevYear' => $prevYear,
+            'nextYear' => $nextYear,
             'export' => $bigExportArray,
         ]);
       }

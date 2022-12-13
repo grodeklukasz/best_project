@@ -32,7 +32,8 @@ class HomeController extends AbstractController
         //if user is Logged redirect to app main view
 
         if($sessionService->getSessionValue('islogged'))
-            return $this->redirectToRoute('app_app');
+            //return $this->redirect('http://172.20.12.81/index.php/panel');
+            return $this->redirectToRoute('app_panel');
 
         $user = new User();
         $errormsg = '';
@@ -77,6 +78,7 @@ class HomeController extends AbstractController
                 $sessionService->setSessionValues('role',$jobcoach->getRole());
 
                 return $this->redirectToRoute('app_panel');
+                //return $this->redirect('http://172.20.12.81/index.php/panel');
                 
             }
             
