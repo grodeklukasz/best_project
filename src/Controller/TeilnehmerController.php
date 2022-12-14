@@ -7,9 +7,11 @@ use App\Service\SessionService;
 use App\Entity\Tn;
 use App\Entity\Jobcoach;
 use App\Entity\Fm;
+use App\Entity\Termin;
 use App\Repository\TnRepository;
 use App\Repository\JobcoachRepository;
 use App\Repository\TerminRepository;
+use App\Repository\TerminTypeRepository;
 use App\Repository\FmRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -89,6 +92,143 @@ class TeilnehmerController extends AbstractController
         'jobcoach' => $jobcoach,
         'allTermine' => $allTermine
       ]);
+    }
+    /**
+     * @Route("/panel/addTeilnehmer", name="addTeilnehmer")
+     */
+    public function app_teilnehmer_add(
+        JobcoachRepository $jobcoachRepository,
+        FmRepository $fmRepository,
+        TnRepository $tnRepository,
+        TerminRepository $terminRepository,
+        TerminTypeRepository $terminTypeRepository,
+        Request $request,
+        ManagerRegistry $doctrine
+    ):Response
+    {
+        $entityManager = $doctrine->getManager();
+
+        $fms = $fmRepository->findAll();
+
+        $addForm = $this->createFormBuilder()
+        ->add('Nachname', TextType::class,[
+            'required' => True,
+            'attr' => ['class' => 'form-control form-control-sm']
+        ])
+        ->add('Vorname', TextType::class,[
+            'required' => True,
+            'attr' => ['class' => 'form-control form-control-sm']
+        ])
+        ->add('Telefonnummer', TextType::class,[
+            'required' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Email', TextType::class,[
+            'required' => True,
+            'attr' => ['class' => 'form-control form-control-sm']
+        ])
+        ->add('Gebdatum', DateType::class, [
+            'required' => True,
+            'widget' => 'single_text',
+            'attr' => ['class'=>'form-control form-control-sm']
+        ]) 
+        ->add('Pseudonym', TextType::class,[
+            'required' => True,
+            'attr' =>['class'=>'form-control form-control-sm']
+        ])
+        ->add('Zuweisen', DateType::class, [
+            'required' => True,
+            'widget' => 'single_text',
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Starttermin', DateType::class, [
+            'required' => True,
+            'widget' => 'single_text',
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Fm', ChoiceType::class,[
+            'required' => True,
+            'choices' => $fms,
+            'choice_value' => 'id',
+            'choice_label' => function(?Fm $fm){
+                return $fm ? $fm->getNachname() . ', ' . $fm->getVorname() : '';
+            },
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Bemerkung',TextAreaType::class,[
+            'required' => False,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Speichern',SubmitType::class,[
+            'attr' => ['class' => 'btn form-control btn-outline-success']
+        ])
+        ->getForm();
+
+        $addForm->handleRequest($request);
+
+        if($addForm->isSubmitted()){
+
+            $nachname = $addForm->get('Nachname')->getData();
+            $vorname = $addForm->get('Vorname')->getData();
+            $telefonnummer = $addForm->get('Telefonnummer')->getData();
+            $email = $addForm->get('Email')->getData();
+            $gebdatum = $addForm->get('Gebdatum')->getData();
+            $pseudonym = $addForm->get('Pseudonym')->getData();
+            $zuweisen = $addForm->get('Zuweisen')->getData();
+            $starttermin = $addForm->get('Starttermin')->getData();
+            $bemerkung = $addForm->get('Bemerkung')->getData();
+            $fm = $addForm->get('Fm')->getData();
+
+            $tn = new Tn();
+                        
+            $jobcoach = $jobcoachRepository->find($this->user['id']);
+
+            $tn->setNachname($nachname);
+            $tn->setVorname($vorname);
+            $tn->setTelefonnummer($telefonnummer);
+            $tn->setEmail($email);
+            $tn->setGebDatum($gebdatum);
+            $tn->setPseudonym($pseudonym);
+            $tn->setStarttermin($starttermin);
+            $tn->setBemerkung($bemerkung);
+            $tn->setJobcoach($jobcoach);
+            $tn->setFm($fm);
+            $tn->setStatus(True);
+
+            $entityManager->persist($tn);
+
+            $entityManager->flush();
+
+            //get id new added TN
+            $tn_id = $tn->getId();
+
+            //get new added TN
+            $newTn = $tnRepository->find($tn_id);
+
+            $termin = new Termin();
+
+            $termin->setTn($newTn);
+            //zuweisung type id 26
+            $terminType = $terminTypeRepository->findOneBy(['id'=>26]);
+            //set TerminType
+            $termin->setTermintype($terminType);
+            //set Date of Termin
+            $termin->setTerminDatum($zuweisen);
+            //set if verschoben ist auf 0 (is not)
+            $termin->setVerschoben(0);
+
+            $entityManager->persist($termin);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('/teilnehmer/add.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'addForm' => $addForm->createView()
+        ]);
     }
 
     /**
@@ -206,6 +346,12 @@ class TeilnehmerController extends AbstractController
             'data'=> $tn->getPseudonym(),
             'attr' => ['class'=>'form-control form-control-sm']
         ])
+        ->add('Starttermin', DateType::class,[
+            'widget' => 'single_text',
+            'required' => False,
+            'data' => $tn->getStarttermin(),
+            'attr'=>['class'=>'form-control form-control-sm']
+        ])
         ->add('Jobcoach', ChoiceType::class,[
             'required' => True,
             'choices' => $jobcoaches,
@@ -253,6 +399,8 @@ class TeilnehmerController extends AbstractController
             $tn->setTelefonnummer($editForm->get('Telefonnummer')->getData());
 
             $tn->setPseudonym($editForm->get('Pseudonym')->getData());
+
+            $tn->setStarttermin($editForm->get('Starttermin')->getData());
 
             $tn->setJobcoach($editForm->get('Jobcoach')->getData());
 
