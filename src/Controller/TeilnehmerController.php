@@ -336,6 +336,11 @@ class TeilnehmerController extends AbstractController
             'required' => True,
             'attr' => ['class'=>'form-control form-control-sm']
         ])
+        ->add('Email', TextType::class,[
+            'data' => $tn->getemail(),
+            'required' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
         ->add('Telefonnummer', TextType::class,[
             'required' => True,
             'data' => $tn->getTelefonnummer(),
@@ -397,6 +402,8 @@ class TeilnehmerController extends AbstractController
             $tn->setGebdatum($editForm->get('Gebdatum')->getData());
 
             $tn->setTelefonnummer($editForm->get('Telefonnummer')->getData());
+
+            $tn->setEmail($editForm->get('Email')->getData());
 
             $tn->setPseudonym($editForm->get('Pseudonym')->getData());
 
