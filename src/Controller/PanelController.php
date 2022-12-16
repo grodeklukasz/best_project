@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use \Doctrine\Common\Collections\Criteria;
+use \Doctrine\Common\Collections\Expr\Comparison;
+
 class PanelController extends AbstractController
 {
     private $user;
@@ -39,17 +42,24 @@ class PanelController extends AbstractController
     {
         if($sessionService->getSessionValue('role')=='admin')
             return $this->redirectToRoute('app_adminpanel');
+        
+        $criteria1 = new Criteria();
+        $expr = new Comparison('jobcoach', Comparison::EQ, $jobcoachRepository->find($this->user['id']));
+        $criteria1->where($expr);
+        $criteria1->orderBy(['nachname'=>Criteria::ASC]);
 
-        $allTn = $tnRespository->findBy(
-            [
-                'jobcoach'=>$jobcoachRepository->find($this->user['id']),
-                'status' => 1
-            ]
-        );
+
+        $allTn = $tnRespository->matching($criteria1);
+
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->neq('id',$this->user['id']));
+        $criteria->orderBy(['nachname'=>Criteria::ASC]);
+        $allJobCoaches =$jobcoachRepository->matching($criteria);
 
         return $this->render('panel/index.html.twig', [
             'isLogged' => $this->isLogged,
             'user' => $this->user,
+            'allJobcoach' => $allJobCoaches,
             'allTeilnehmer' => $allTn
         ]);
     }
@@ -62,6 +72,10 @@ class PanelController extends AbstractController
             return $this->redirectToRoute('app_panel');
 
         $allJobCoaches = $jobcoachRepository->findAll();
+
+        $criteria = new Criteria();
+        $criteria->orderBy(['nachname'=>Criteria::ASC]);
+        $allJobCoaches = $jobcoachRepository->matching($criteria);
         
         return $this->render('panel/adminpanel.html.twig', [
             'isLogged' => $this->isLogged,
