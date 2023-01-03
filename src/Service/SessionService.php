@@ -31,5 +31,14 @@ class SessionService{
         $this->session->clear();
     }
 
+    public function checkConditions(): bool
+    {
+        if($this->getSessionValue('isLogged')||$this->getSessionValue('role')!='admin'){
+            return True;
+        }else{
+            return False;
+        }
+        
+    }
    
 }

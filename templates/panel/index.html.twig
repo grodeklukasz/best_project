@@ -24,16 +24,21 @@
                 </tbody>    
             </table>
             <hr />  
+
+            {% if user.role == 'user' %}
+
             <div class="list-group">
-                {% if allJobcoach %}
+                
                     {% for jobcoach in allJobcoach %}
                     <a href="#" class="list-group-item list-group-item-action">
                     {{ jobcoach.nachname }}, {{ jobcoach.vorname }}
                     </a>
                     {% endfor %}
-                {% endif %}
-
+                
             </div>
+
+            {% endif %}
+
         </div>
         <div class="col-xl-10 col-lg-8 col-md-12 col-sm-12 col-xs-12">
 

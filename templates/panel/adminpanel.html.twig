@@ -7,7 +7,10 @@
 
 <div class='container-fluid'>
     <div class='row'>
+    <!--
         <div class='col-xl-2 col-lg-6 col-md-4 col-sm-12 col-xs-12'>
+    -->
+        <div class='col-sm-12 col-md-4 col-xl-2'>
             <table class='table table-striped table-bordered'>
                 <thead>
                     <tr>
@@ -24,23 +27,36 @@
                 </tbody>    
             </table>
         </div>
+        <!--
         <div class='col-xl-2 col-lg-6 col-md-8 col-sm-12 col-xs-12'>
-            <h3>Coaches</h3>
-            {% for coach in allJobCoaches %}
-            <div class="card" style="width: 22rem;">
+        -->
+        <div class='col-sm-12 col-md-8 col-xl-10'>
             
-            <div class="card-body">
-                <h5 class="card-title">{{ coach.nachname }}, {{coach.vorname }}</h5>
-                <p class="card-text">
-                    {{ coach.email }}<br>
-                    {{ coach.telefonnummer }}
-                </p>
-                <a href="{{ path('app_adminpanel_coach',{'id': coach.id}) }}" class="btn btn-outline-secondary btn-sm">Details</a>
-            </div>
+            <table class='table table-striped'>
+                <thead>
+                    <tr>
+                        <th>Coaches</th>
+                        <th>Rufnummer</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for coach in allJobCoaches %}
+                    <tr>
+                        <td>
+                            <p>{{ coach.nachname }}, {{coach.vorname }}</p>
+                            <p>{{ coach.email }}</p>
+                        </td>
+                        <td>{{ coach.telefonnummer }}</td>
+                        </td>
+                        <td>
+                        <a href="{{ path('app_adminpanel_coach',{'id': coach.id}) }}" class="btn btn-outline-secondary btn-sm">Mehr</a>
+                        </td>
 
-            </div>
-            
-            {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>    
         </div>
         
     </div>
