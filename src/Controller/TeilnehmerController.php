@@ -311,9 +311,13 @@ class TeilnehmerController extends AbstractController
         TnRepository $tnRepository,
         FmRepository $fmRepository, 
         JobcoachRepository $jobcoachRepository,
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,
+        SessionService $sessionService
         ): Response 
-    {
+    {   
+        if($sessionService->checkConditions()){
+            return $this->redirectToRoute('app_home');
+        }
 
         $entityManager = $doctrine->getManager();
 

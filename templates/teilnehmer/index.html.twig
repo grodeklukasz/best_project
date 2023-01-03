@@ -32,10 +32,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">Termin zuweisen</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{path('app_teilnehmer_edit',{id: tndetails.id})}}">Bearbeiten</a>
-                    </li>
                     {% if(user.role=='admin') %}
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{{path('app_teilnehmer_edit',{id: tndetails.id})}}">Bearbeiten</a>
+                        </li>
                         <li class="nav-item">
                             {% if(tndetails.status) %}
                                 <a class="btn btn-outline-danger" href="{{path('app_teilnehmer_delete',{id: tndetails.id})}}">Entfernen</a>
