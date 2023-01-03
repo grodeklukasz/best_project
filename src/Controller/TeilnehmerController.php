@@ -238,9 +238,13 @@ class TeilnehmerController extends AbstractController
         int $id,
         Request $request,
         ManagerRegistry $doctrine,
-        TnRepository $tnRepository
+        TnRepository $tnRepository,
+        SessionService $sessionService
     ):Response
     {
+        if($sessionService->checkConditions()){
+            return $this->redirectToRoute('app_home');
+        }
         $entityManager = $doctrine->getManager();
 
         $deleteForm=$this->createFormBuilder()
