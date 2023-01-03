@@ -46,9 +46,8 @@ class PanelController extends AbstractController
         $criteria1 = new Criteria();
         $expr = new Comparison('jobcoach', Comparison::EQ, $jobcoachRepository->find($this->user['id']));
         $criteria1->where($expr);
+        $criteria1->andwhere(Criteria::expr()->eq('status',1));
         $criteria1->orderBy(['nachname'=>Criteria::ASC]);
-
-
         $allTn = $tnRespository->matching($criteria1);
 
         $criteria = new Criteria();
@@ -60,6 +59,29 @@ class PanelController extends AbstractController
             'isLogged' => $this->isLogged,
             'user' => $this->user,
             'allJobcoach' => $allJobCoaches,
+            'allTeilnehmer' => $allTn
+        ]);
+    }
+    /**
+     * @Route("/archiv", name="app_archiv")
+     */
+    public function appArchiv(
+        SessionService $sessionService,
+        TnRepository $tnRespository,
+        JobCoachRepository $jobcoachRepository
+    ):Response
+    {
+        $criteria = new Criteria();
+        $expr = new Comparison('jobcoach', Comparison::EQ, $jobcoachRepository->find($this->user['id']));
+        $criteria->where($expr);
+        $criteria->andwhere(Criteria::expr()->neq('status',1));
+        $criteria->orderBy(['nachname'=>Criteria::ASC]);
+        $allTn = $tnRespository->matching($criteria);
+
+        return $this->render('panel/index.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'allJobcoach' => [],
             'allTeilnehmer' => $allTn
         ]);
     }
