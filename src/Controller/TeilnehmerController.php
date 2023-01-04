@@ -70,7 +70,7 @@ class TeilnehmerController extends AbstractController
             $tnDetails = $tnRepository->findOneBy(
                 [
                     'id'=>$id, 
-                    'jobcoach'=>$jobcoachRepository->findBy(['id'=>$this->user['id']]),
+                    //'jobcoach'=>$jobcoachRepository->findBy(['id'=>$this->user['id']]),
                     'status' => True
                 ]);
         }

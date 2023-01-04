@@ -38,7 +38,7 @@
                         </li>
                         <li class="nav-item">
                             {% if(tndetails.status) %}
-                                <a class="btn btn-outline-danger" href="{{path('app_teilnehmer_delete',{id: tndetails.id})}}">Entfernen</a>
+                                <a class="btn btn-outline-danger" href="{{path('app_teilnehmer_delete',{id: tndetails.id})}}">Deaktiviren</a>
                             {% else %}
                                 <a class="btn btn-outline-success" href="{{path('app_teilnehmer_active',{id: tndetails.id})}}">Zurücksetzen (Aktivieren)</a>
                             {% endif %}

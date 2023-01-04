@@ -86,6 +86,37 @@ class PanelController extends AbstractController
         ]);
     }
     /**
+     * @Route("panel/jobcoach/{jobcoach_id}", name="app_jobcoach")
+     */
+    public function app_jobcoach(
+        int $jobcoach_id,
+        SessionService $sessionService, 
+        TnRepository $tnRepository,
+        JobcoachRepository $jobcoachRepository
+        ):Response
+    {
+        $criteria1 = new Criteria();
+        $expr = new Comparison('jobcoach', Comparison::EQ, $jobcoachRepository->find($jobcoach_id));
+        $criteria1->where($expr);
+        $criteria1->andwhere(Criteria::expr()->eq('status',1));
+        $criteria1->orderBy(['nachname'=>Criteria::ASC]);
+        $allTn = $tnRepository->matching($criteria1);
+
+        $criteria = new Criteria();
+        $criteria->where(Criteria::expr()->neq('id',$this->user['id']));
+        $criteria->orderBy(['nachname'=>Criteria::ASC]);
+        $allJobCoaches =$jobcoachRepository->matching($criteria);
+
+        $currentUser = $jobcoachRepository->find($jobcoach_id);
+
+        return $this->render('panel/index.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'allJobcoach' => $allJobCoaches,
+            'allTeilnehmer' => $allTn
+        ]);
+    }
+    /**
      * @Route("/panel/admin", name="app_adminpanel")
      */
     public function adminpanel(SessionService $sessionService, JobcoachRepository $jobcoachRepository){
@@ -123,10 +154,16 @@ class PanelController extends AbstractController
                 ['status' => 'DESC']
             );
 
+            $criteria = new Criteria();
+            $criteria->where(Criteria::expr()->neq('id',$this->user['id']));
+            $criteria->orderBy(['nachname'=>Criteria::ASC]);
+            $allJobCoaches =$jobcoachRepository->matching($criteria);
+
             return $this->render('panel/index.html.twig', [
                 'isLogged' => $this->isLogged,
                 'user' => $this->user,
-                'allTeilnehmer' => $allTn
+                'allTeilnehmer' => $allTn,
+                'allJobcoach' => $allJobCoaches,
             ]);
         }
 }

@@ -25,14 +25,28 @@
             </table>
             <hr />  
 
-            {% if user.role == 'user' %}
+            {% if ((user.role == 'user') or (user.role == 'admin')) %}
 
             <div class="list-group">
                 
                     {% for jobcoach in allJobcoach %}
-                    <a href="#" class="list-group-item list-group-item-action">
-                    {{ jobcoach.nachname }}, {{ jobcoach.vorname }}
-                    </a>
+
+                        {% if (user.role == 'user') %}
+
+                        <a href="{{ path('app_jobcoach', {jobcoach_id: jobcoach.id} )}}" 
+                            class="list-group-item list-group-item-action"
+                        >
+                        {% else %}
+
+                        <a href="{{ path('app_adminpanel_coach', {id: jobcoach.id} )}}" 
+                            class="list-group-item list-group-item-action"
+                        >
+                        {% endif %}
+
+                            {{ jobcoach.nachname }}, {{ jobcoach.vorname }}
+
+                        </a>
+
                     {% endfor %}
                 
             </div>
@@ -53,6 +67,7 @@
                         <th>Geb.Datum</th>
                         <th>Username</th>
                         <th>Starttermin</th>
+                        <th>Jobcoach</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -67,6 +82,7 @@
                         <td>{{ tn.gebdatum|date('d.m.Y') }}</td>
                         <td>{{ tn.pseudonym }}</td>
                         <td>{{ tn.starttermin|date('d.m.Y') }}</td>
+                        <td>{{ tn.jobcoach.nachname }}</td>
                         <td><a href='{{ path('app_teilnehmer', {id: tn.id}) }}'>mehr</a></td>
                     </tr>
                 {% endfor %}
