@@ -30,7 +30,7 @@
             <div class="col-xl-10 col-lg-8 col-md-8 col-sm-12 col-xs-12" style='padding: 25px;'>
                 <ul class="nav justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Termin zuweisen</a>
+                        <a class="nav-link" href="{{ path('app_addTermin',{ tnId: tndetails.id })}}">Termin zuweisen</a>
                     </li>
                     {% if(user.role=='admin') %}
                         <li class="nav-item">

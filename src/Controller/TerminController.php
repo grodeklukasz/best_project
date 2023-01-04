@@ -2,13 +2,28 @@
 
 namespace App\Controller;
 
+use App\Entity\TerminType;
+use App\Entity\Termin;
+
 use App\Service\SessionService;
 use App\Repository\TerminRepository;
+use App\Repository\TerminTypeRepository;
 use App\Repository\TnRepository;
 use App\Repository\JobcoachRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use Doctrine\Persistence\ManagerRegistry;
 
 class TerminController extends AbstractController
 {
@@ -78,6 +93,104 @@ class TerminController extends AbstractController
             'isLogged' => $this->isLogged,
             'user' => $this->user,
             'alleTermine' => $alleTermine
+        ]);
+    }
+
+    /**
+     * @Route("/termin/addTermin/{tnId}", name="app_addTermin")
+     */
+    public function addTermin(
+        int $tnId,
+        Request $request,
+        TnRepository $tnRepository,
+        TerminRepository $terminRepository,
+        TerminTypeRepository $terminType,
+        ManagerRegistry $doctrine
+        ):Response 
+    {
+        $tn = $tnRepository->find($tnId);
+
+        $terminTypes = $terminType->findAll();
+
+        $verschoben = [
+            'Nein' => 0,
+            'Ja' => 1
+        ];
+
+        $entityManager = $doctrine->getManager();
+
+        $addTerminForm = $this->createFormBuilder()
+        ->add('tnId',HiddenType::class,[
+            'data' => $tn->getId()
+        ])
+        ->add('Nachname',TextType::class,[
+            'required' => True,
+            'data' => $tn->getNachname(),
+            'disabled' => True,
+            'attr' => ['class' => 'form-control form-control-sm']
+        ])
+        ->add('Vorname', TextType::class,[
+            'required' => True,
+            'data' => $tn->getVorname(),
+            'disabled' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Termindatum',DateType::class,[
+            'required' => True,
+            'widget' => 'single_text',
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Termin',ChoiceType::class,[
+            'required' => True,
+            'choices' => $terminTypes,
+            'choice_value' => 'id',
+            'choice_label' => function(?TerminType $terminType){
+                return $terminType ? $terminType->getTerminname() : '';
+            },
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Verschoben', ChoiceType::class,[
+            'required' => True,
+            'choices' => $verschoben,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Bemerkung',TextareaType::class,[
+            'required' => False,
+            'attr' => ['class'=>'form-control']
+        ])
+        ->add('Speichern',SubmitType::class,[
+            'attr'=>['class'=>'btn btn-sm btn-outline-success']
+        ])
+        ->getForm();
+
+        $addTerminForm->handleRequest($request);
+
+        if($addTerminForm->isSubmitted()){
+
+            $tnId = $addTerminForm->get('tnId')->getData();
+        
+            $termin = new Termin();
+
+            $tn = $tnRepository->find($tnId);
+
+            $termin->setTn($tn);
+            $termin->setTermindatum($addTerminForm->get('Termindatum')->getData());
+            $termin->setTerminType($addTerminForm->get('Termin')->getData());
+            $termin->setVerschoben($addTerminForm->get('Verschoben')->getData());
+            $termin->setBemerkung($addTerminForm->get('Bemerkung')->getData());
+            
+            $entityManager->persist($termin);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_teilnehmer',['id'=>$tnId]);
+        }
+
+        return $this->render('termin/addTermin.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'tnId' => $tnId,
+            'addTerminForm' => $addTerminForm->createView()
         ]);
     }
 }
