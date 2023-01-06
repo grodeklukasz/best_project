@@ -1,0 +1,27 @@
+{% extends 'home_base.html.twig' %}
+
+{% block title %}Modal{% endblock %}
+
+{% block body %}
+    <div class='container'>
+        <div class='row' 
+        style='
+        margin-top: 10%; 
+        padding: 20px; 
+        border: 1px solid black;
+        box-shadow: 2px 2px 4px grey;
+        '
+        >
+            <div class="col-4"></div>
+            <div class='col-4'>
+                {% for line in textArray %}
+                    <p>{{ line }}</p>
+                {% endfor %}
+                <hr />
+                {{ form(form) }}
+                <p><a href="{{ url_path }}" class="{{buttonClasses}}">{{ actionname }}</a></p>
+            </div>
+            <div class="col-4"></div>
+        </div>
+    </div>
+{% endblock %}

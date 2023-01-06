@@ -58,6 +58,7 @@
                                 <th>Termin (Grund)</th>
                                 <th>Verschoben</th>
                                 <th>Bemerkung</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -67,6 +68,7 @@
                             <td>{{ termin.termintype }}</td>
                             <td>{{ termin.verschoben ? 'Ja' : 'Nein' }}</td>
                             <td>{{ termin.bemerkung }}</td>
+                            <td><a href="{{ path("app_editTermin",{terminId: termin.id } ) }}">bearbeiten</a></td>
                             </tr>
                         {% endfor %}
                         </tbody>

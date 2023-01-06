@@ -22,6 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -159,7 +160,7 @@ class TerminController extends AbstractController
             'attr' => ['class'=>'form-control']
         ])
         ->add('Speichern',SubmitType::class,[
-            'attr'=>['class'=>'btn btn-sm btn-outline-success']
+            'attr'=>['class'=>'btn form-control btn-sm btn-outline-success']
         ])
         ->getForm();
 
@@ -191,6 +192,164 @@ class TerminController extends AbstractController
             'user' => $this->user,
             'tnId' => $tnId,
             'addTerminForm' => $addTerminForm->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/termin/editTermin/{terminId}", name="app_editTermin")
+     */
+    public function edittermin(
+        int $terminId,
+        Request $request,
+        TerminRepository $terminRepository,
+        TnRepository $tnRepository,
+        TerminTypeRepository $terminType,
+        ManagerRegistry $doctrine
+        ):Response
+    {
+        $entityManager = $doctrine->getManager();
+
+        $currentTermin = $terminRepository->find($terminId);
+
+        $isVerschoben = $currentTermin->isVerschoben();
+        
+        $currentTerminType = $currentTermin->getTermintype();
+
+        $terminTypes = $terminType->findAll();
+
+        $verschoben = [
+            'Ja' => 1,
+            'Nein' => 0
+        ];
+
+        $editForm = $this->createFormBuilder()
+        ->add('tnId', HiddenType::class,[
+            'data'=>$currentTermin->getTn()->getId()
+        ])
+        ->add('terminId', HiddenType::class,[
+            'data' => $terminId
+        ])
+        ->add('Datum', DateType::class,[
+            'required' => True,
+            'data'=>$currentTermin->getTermindatum(),
+            'widget'=>'single_text',
+            'attr'=> ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Termin',ChoiceType::class,[
+            'required' => True,
+            'choices' => $terminTypes,
+            'choice_label'=> function(?TerminType $terminType){
+                return $terminType ? $terminType->getTerminname() : '';
+            },
+            'data' => $currentTerminType,
+            'attr'=>['class'=>'form-control form-control-sm']
+        ])
+        ->add('Verschoben', ChoiceType::class,[
+            'required' => True,
+            'choices' => $verschoben,
+            'data' => $isVerschoben,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Bemerkung', TextareaType::class,[
+            'required' => False,
+            'data'=>$currentTermin->getBemerkung(),
+            'attr' => ['class'=>'form-control']
+        ])
+        ->add('Aktualisieren', SubmitType::class,[
+            'attr'=>['class'=>'btn form-control btn-sm btn-outline-warning']
+        ])
+        ->getForm();
+
+        $editForm->handleRequest($request);
+
+        if($editForm->isSubmitted()){
+
+            $terminId = $editForm->get('terminId')->getData();
+            $tnId = $editForm->get('tnId')->getData();
+            $datum = $editForm->get('Datum')->getData();
+            $termintype = $editForm->get('Termin')->getData();
+            $verschoben = $editForm->get('Verschoben')->getData();
+            $bemerkung = $editForm->get('Bemerkung')->getData();
+
+            $termin = $terminRepository->find($terminId);
+            $tn = $tnRepository->find($tnId);
+
+            $termin->setTermindatum($datum);
+            $termin->setTermintype($termintype);
+            $termin->setTn($tn);
+            $termin->setBemerkung($bemerkung);
+            $termin->setVerschoben($verschoben);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_teilnehmer',['id'=>$tnId]);
+        }
+
+        return $this->render('termin/editTermin.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'terminId' => $terminId,
+            'termin' => $currentTermin,
+            'editform' => $editForm->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/termin/delete/{terminId}", name="app_termin_delete")
+     */
+    public function app_termin_delete(
+        int $terminId,
+        TerminRepository $terminRepository,
+        ManagerRegistry $doctrine,
+        Request $request
+    ):Response    
+    {
+        $textArray = [
+            'Sind Sie sicher?',
+            'es wird gelöscht...'
+        ];
+        $action = 'makeaction';
+
+        $form = $this->createFormBuilder()
+        ->add('terminId', HiddenType::class,[
+            'data' => $terminId
+        ])
+        ->add('submit', SubmitType::class,[
+            'label' => 'Ja',
+            'attr' =>[
+                'class'=>'btn btn-outline-danger btn-sm form-control'
+                ]
+        ])
+        ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()){
+
+            $entityManager = $doctrine->getManager();
+            
+            $terminId = $form->get('terminId')->getData();
+
+            $termin = $terminRepository->find($terminId);
+
+            $entityManager->remove($termin);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_panel');
+
+
+        }
+
+
+        return $this->render('UI/modal.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'textArray' => $textArray,
+            'actionname' => 'Zurück',
+            'url_path' => '/termin/editTermin/'.$terminId,
+            'buttonClasses' => 'btn btn-sm btn-outline-success form-control',
+            'form' => $form->createView()
         ]);
     }
 }
