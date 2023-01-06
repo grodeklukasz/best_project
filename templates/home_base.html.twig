@@ -45,13 +45,13 @@
                             <li>
                             <a class="nav-link" href="{{ path('app_archiv')}}">Archiv</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_stats3', {jahr: 0}) }}">Statistik</a>
+                            </li>
                             {% if user.role == 'admin' %}
                             <div class="vr"></div>
                             <li class="nav-item">
                             <a class="nav-link" href="{{ path('addTeilnehmer') }}">Teilnehmer</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('app_stats3', {jahr: 2022}) }}">Statistik</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Benutzer Verwaltung</a>

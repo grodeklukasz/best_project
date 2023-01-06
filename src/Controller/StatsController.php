@@ -172,6 +172,8 @@ class StatsController extends AbstractController
         if(!$sessionService->getSessionValue('islogged'))
             return $this->redirectToRoute('app_home');
 
+        $jahr = $jahr == 0 ? date("Y") : $jahr;
+
         $bigExportArray = array();
 
             //for all months of the year
