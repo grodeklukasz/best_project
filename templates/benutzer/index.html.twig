@@ -1,0 +1,44 @@
+{% extends 'home_base.html.twig' %}
+
+{% block title %}Benutzer Verwaltung{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row" style="margin-top: 40px;">
+        <div class="col-10">
+            <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
+                    <th>Email</th>
+                    <th>Rufnummer</th>
+                    <th>Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.nachname }}</td>
+                    <td>{{ user.vorname }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.telefonnummer }}</td>
+                    <td>{{ user.isActive ? 'Aktiv' : 'Inaktiv' }}</td>
+                    <td><a href='{{path('app_benutzer_verwaltung_edit', {userid: user.id} )}}'>Bearbeiten</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        <div class="col-2" style="border-left: 1px solid grey;">
+            <h5>Menu</h5>
+            <p>
+                <a href="">neuer Benutzer</a>
+            </p>
+        </div>
+   </div>
+</div>
+{% endblock %}

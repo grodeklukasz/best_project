@@ -59,9 +59,9 @@ class HomeController extends AbstractController
         if($form->isSubmitted()){
             
             $email = $form->get('Email')->getData();
-            $pass = $form->get('Kennwort')->getData();
+            $pass = hash('sha3-512',trim($form->get('Kennwort')->getData()));
 
-            $jobcoach = $jobcoachRepository->findOneBy(['email'=>$email,'kennwort'=>$pass]);
+            $jobcoach = $jobcoachRepository->findOneBy(['email'=>$email,'kennwort'=>$pass,'isActive'=>1]);
 
             if(!$jobcoach){
                 
