@@ -83,14 +83,122 @@ class BenutzerController extends AbstractController
         ]);
     }
     /**
+     * @Route("/panel/benutzer-verwaltung/add", name="app_benutzer_verwaltung_add")
+     */
+    public function benutzerVerwaltungAdd(
+        SessionService $sessionService,
+        Request $request,
+        JobcoachRepository $jobcoachRepository,
+        ManagerRegistry $doctrine
+        ):Response {
+
+        if(!$this->checkUser($sessionService)){
+            return $this->redirectToRoute('app_home');
+        }
+
+        $entityManager = $doctrine->getManager();
+
+        $msg = '';
+
+        $addForm = $this->createFormBuilder()
+        ->add('Nachname', TextType::class, [
+            'label' => 'Nachname*',
+            'required' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Vorname', TextType::class, [
+            'label'=>'Vorname*',
+            'required' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Rufnummer', TextType::class, [
+            'required' => False,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Email', EmailType::class, [
+            'label' => 'Email*',
+            'required' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Kennwort', PasswordType::class,[
+            'label'=>'Kennwort*',
+            'required' => True,
+            'attr' => ['class'=>'form-control form-control-sm']
+            ]
+        )
+        ->add('Benutzer', ChoiceType::class,[
+            'choices' => [
+                'User' => 'user',
+                'Admin' => 'admin'
+            ],
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Status', ChoiceType::class,[
+            'choices' => [
+                'Aktive' => 1,
+                'Inaktive' => 0
+            ],
+            'attr' => ['class'=>'form-control form-control-sm']
+        ])
+        ->add('Speichern', SubmitType::class, [
+            'attr' => [
+                'class'=>'btn btn-outline-success btn-sm form-control',
+                'style' => 'margin-top: 10px;'
+                ]
+        ])
+        ->getForm();
+
+        $addForm->handleRequest($request);
+
+        if($addForm->isSubmitted()){
+
+            $findJobCoach = $jobcoachRepository->findBy(['email'=>$addForm->get('Email')->getData()]);
+
+            if($findJobCoach){
+                $msg = "E-Mail Adresse existiert. Benutzerkonto kann nich erstellt werden.";
+            }else{
+                
+                $jobcoach = new JobCoach();
+
+                $jobcoach->setVorname($addForm->get('Vorname')->getData());
+                $jobcoach->setNachname($addForm->get('Nachname')->getData());
+                $jobcoach->setTelefonnummer($addForm->get('Rufnummer')->getData());
+                $jobcoach->setEmail($addForm->get('Email')->getData());
+                $jobcoach->setKennwort(hash('sha3-512',$addForm->get('Kennwort')->getData()));
+                $jobcoach->setRole($addForm->get('Benutzer')->getData());
+                $jobcoach->setIsActive($addForm->get('Status')->getData());
+
+                $entityManager->persist($jobcoach);
+
+                $entityManager->flush();
+
+                return $this->redirectToRoute('app_home');
+
+            }
+
+        }
+
+        return $this->render('benutzer/add.html.twig',[
+            'isLogged' => $this->isLogged,
+            'user' => $this->user,
+            'addForm' => $addForm->createView(),
+            'msg' => $msg
+        ]);
+    }
+    /**
      * @Route("/panel/benutzer-verwaltung/edit/{userid}", name="app_benutzer_verwaltung_edit")
      */
     public function benutzerVerwaltungEdit(
         int $userid,
+        SessionService $sessionService,
         JobcoachRepository $jobcoachRepository,
         Request $request,
         ManagerRegistry $doctrine
         ):Response {
+
+        if(!$this->checkUser($sessionService)){
+            return $this->redirectToRoute('app_home');
+        }
 
         $jobcoach = $jobcoachRepository->findOneBy(['id'=>$userid]);
 

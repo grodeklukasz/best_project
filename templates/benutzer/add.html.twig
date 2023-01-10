@@ -1,0 +1,21 @@
+{% extends "home_base.html.twig" %}
+
+{% block title %}Neuer Benutzer{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row" style='margin-top: 25px;'>
+        <div class="col-3"></div>
+        <div class="col-6">
+            {% if(msg) %}
+            <p style='color: red;'>
+                {{msg}}
+            </p>
+            {% endif %}
+            {{ form(addForm) }}
+            
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+{% endblock %}
